@@ -3,6 +3,8 @@ import { ArrowLeft, Settings, Share2, Sparkles, Mic, Gift, Send, Wand2, Quote, B
 import { motion, AnimatePresence } from 'framer-motion';
 import { NOVELS } from '../novels/index';
 
+const BASE_URL = import.meta.env.BASE_URL || '/';
+
 export default function ImmersiveReader({ storyId, onBack }) {
   const [story, setStory] = useState(null);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
@@ -100,7 +102,7 @@ export default function ImmersiveReader({ storyId, onBack }) {
         throw new Error(`Novel with id ${storyId} not found`);
       }
       
-      const response = await fetch(`/novels/${novel.file}`);
+      const response = await fetch(`${BASE_URL}novels/${novel.file}`);
       if (!response.ok) {
         throw new Error(`Failed to load story: ${response.statusText}`);
       }
