@@ -100,7 +100,7 @@ export default function ImmersiveReader({ storyId, onBack }) {
         throw new Error(`Novel with id ${storyId} not found`);
       }
       
-      const response = await fetch(`/src/novels/${novel.file}`);
+      const response = await fetch(`/novels/${novel.file}`);
       if (!response.ok) {
         throw new Error(`Failed to load story: ${response.statusText}`);
       }

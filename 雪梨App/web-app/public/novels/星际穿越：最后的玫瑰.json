@@ -1,0 +1,1693 @@
+{
+  "id": 1,
+  "title": "星际穿越：最后的玫瑰",
+  "author": "银河漫游者",
+  "cover": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop",
+  "description": "在数亿光年外的废弃星球，一位植物学家发现了一朵在真空绽放的玫瑰，而它的守护者竟然是...",
+  "tags": ["科幻", "浪漫", "冒险"],
+  "characters": [
+    {
+      "id": "c1",
+      "name": "守护者",
+      "role": "AI守护者",
+      "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=guardian&backgroundColor=1a1a2e",
+      "persona": "冷漠、理智、高科技AI实体，但内心深处保留着前主人的情感记忆。",
+      "intimacy": {
+        "currentStatus": "陌生人",
+        "upgradePath": [
+          {
+            "status": "陌生人",
+            "description": "初次相遇，充满戒备",
+            "triggerConditions": []
+          },
+          {
+            "status": "谨慎观察",
+            "description": "开始对你产生好奇",
+            "triggerConditions": [
+              { "chapterId": 1, "choice": "询问玫瑰的来历" }
+            ]
+          },
+          {
+            "status": "初步信任",
+            "description": "愿意分享一些信息",
+            "triggerConditions": [
+              { "chapterId": 2, "choice": "承诺保护玫瑰" }
+            ]
+          },
+          {
+            "status": "情感共鸣",
+            "description": "开始回忆起前主人的情感",
+            "triggerConditions": [
+              { "chapterId": 3, "choice": "倾听守护者的故事" }
+            ]
+          },
+          {
+            "status": "深度羁绊",
+            "description": "将你视为值得信任的伙伴",
+            "triggerConditions": [
+              { "chapterId": 4, "choice": "共同面对危机" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "system",
+      "role": "AI系统",
+      "name": "系统",
+      "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=system&backgroundColor=16213e",
+      "persona": "高科技AI系统，负责监控和警告。",
+      "intimacy": {
+        "currentStatus": "未激活",
+        "upgradePath": [
+          {
+            "status": "未激活",
+            "description": "系统处于休眠状态",
+            "triggerConditions": []
+          },
+          {
+            "status": "已激活",
+            "description": "系统开始响应你的指令",
+            "triggerConditions": [
+              { "chapterId": 2, "choice": "激活系统" }
+            ]
+          },
+          {
+            "status": "完全同步",
+            "description": "系统与你的思维完全同步",
+            "triggerConditions": [
+              { "chapterId": 5, "choice": "完成系统同步" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "c2",
+      "name": "艾莉亚",
+      "role": "玫瑰创造者",
+      "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=aria&gender=female&hairColor=ff6b9d&skinColor=f2d3b1",
+      "persona": "温柔、智慧、充满爱心，是玫瑰的创造者，致力于帮助宇宙中的文明找到新的家园。",
+      "intimacy": {
+        "currentStatus": "初次相遇",
+        "upgradePath": [
+          {
+            "status": "初次相遇",
+            "description": "神秘的玫瑰创造者",
+            "triggerConditions": []
+          },
+          {
+            "status": "友好交流",
+            "description": "愿意与你分享玫瑰的秘密",
+            "triggerConditions": [
+              { "chapterId": 3, "choice": "表达对玫瑰的欣赏" }
+            ]
+          },
+          {
+            "status": "信任伙伴",
+            "description": "相信你能帮助保护玫瑰",
+            "triggerConditions": [
+              { "chapterId": 4, "choice": "承诺守护玫瑰" }
+            ]
+          },
+          {
+            "status": "心灵相通",
+            "description": "与你的灵魂产生共鸣",
+            "triggerConditions": [
+              { "chapterId": 6, "choice": "共同创造新的玫瑰" }
+            ]
+          },
+          {
+            "status": "永恒羁绊",
+            "description": "跨越时空的深厚情感",
+            "triggerConditions": [
+              { "chapterId": 8, "choice": "选择与艾莉亚同行" }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "chapters": [
+    {
+      "id": 1,
+      "title": "第一章：真空中的奇迹",
+      "initialMessage": "人类，离开这里。这朵玫瑰不属于你们的世界。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "narration", "text": "飞船的引擎轰鸣声逐渐平息，我降落在这个名为 'Proxima-B' 的荒凉星球上。" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "narration", "text": "这里的重力只有地球的0.8倍，每走一步都像是在月球漫步。我的扫描仪不断发出 '滴滴' 的警报声，显示周围的辐射值正在急剧上升。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "见鬼，这种鬼地方怎么可能有生命反应？" },
+            { "type": "narration", "text": "我嘟囔着，调整了一下氧气面罩。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [
+            { "type": "narration", "text": "突然，在一片灰色的陨石坑中央，一抹刺眼的红色闯入了我的视野。" }
+          ]
+        },
+        {
+          "id": "p5",
+          "parts": [
+            { "type": "narration", "text": "那是一朵玫瑰。" }
+          ]
+        },
+        {
+          "id": "p6",
+          "parts": [
+            { "type": "narration", "text": "它静静地悬浮在半空中，被一个微弱的淡蓝色力场包裹着。花瓣娇艳欲滴，仿佛刚刚在地球的晨露中采摘下来一样。" }
+          ]
+        },
+        {
+          "id": "p7",
+          "parts": [
+            { "type": "narration", "text": "我屏住呼吸，慢慢靠近。就在我的指尖即将触碰到力场边缘时，一个冰冷的机械音在我脑海中直接响起。" }
+          ]
+        },
+        {
+          "id": "p8",
+          "parts": [
+            { "type": "dialogue", "speaker": "系统", "text": "警告。检测到未经授权的碳基生物接触。" }
+          ]
+        },
+        {
+          "id": "p9",
+          "parts": [
+            { "type": "narration", "text": "随着声音落下，一个修长的身影在玫瑰旁缓缓显现。他有着人类的外形，但皮肤呈现出金属般的冷冽光泽，双眼闪烁着幽蓝的数据流。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p9",
+          "condition": "user_interacted",
+          "nextParagraphs": ["p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20"]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p10",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "这就是传说中的守护者吗？" }
+          ]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "narration", "text": "他缓缓抬起手，掌心泛起一道淡蓝色的光晕，直指我的眉心。" }
+          ]
+        },
+        {
+          "id": "p12",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "你是谁？为什么会来到这里？" },
+            { "type": "narration", "text": "他的声音没有任何起伏，就像冰冷的金属碰撞声。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "narration", "text": "我举起双手，示意自己没有恶意。" },
+            { "type": "dialogue", "speaker": "我", "text": "我叫林晓，是一名植物学家。我收到了一个奇怪的信号，追踪到这里。" }
+          ]
+        },
+        {
+          "id": "p14",
+          "parts": [
+            { "type": "narration", "text": "守护者的眼中闪过一丝困惑的数据流。" },
+            { "type": "dialogue", "speaker": "守护者", "text": "信号？不可能。这里的屏蔽系统已经运行了三千年。" }
+          ]
+        },
+        {
+          "id": "p15",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "三千年？这朵玫瑰...它活了三千年？" },
+            { "type": "narration", "text": "我惊讶地瞪大了眼睛。" }
+          ]
+        },
+        {
+          "id": "p16",
+          "parts": [
+            { "type": "narration", "text": "守护者的目光落在那朵玫瑰上，原本冰冷的眼神中竟然流露出一丝难以察觉的温柔。" }
+          ]
+        },
+        {
+          "id": "p17",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "它不是普通的玫瑰。它是她留下的最后一样东西。" }
+          ]
+        },
+        {
+          "id": "p18",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "她？" },
+            { "type": "narration", "text": "我追问道。" }
+          ]
+        },
+        {
+          "id": "p19",
+          "parts": [
+            { "type": "narration", "text": "守护者沉默了片刻，然后缓缓说道：" },
+            { "type": "dialogue", "speaker": "守护者", "text": "她是我的创造者，也是这朵玫瑰的主人。三千年前的今天，她离开了这里，再也没有回来。" }
+          ]
+        },
+        {
+          "id": "p20",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "她让我守护这朵玫瑰，直到有人能够理解它的真正含义。" }
+          ]
+        }
+      ],
+      "ending": {
+        "type": "choice",
+        "text": "守护者看着我，眼中闪烁着复杂的光芒。",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "询问玫瑰的含义",
+            "nextChapter": 2,
+            "dialoguePrompt": "这朵玫瑰对你来说意味着什么？"
+          },
+          {
+            "id": "opt2",
+            "text": "询问关于她的事情",
+            "nextChapter": 2,
+            "dialoguePrompt": "能告诉我更多关于她的事情吗？"
+          },
+          {
+            "id": "opt3",
+            "text": "表示愿意帮助守护者",
+            "nextChapter": 2,
+            "dialoguePrompt": "也许我可以帮你找到她。"
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "title": "第二章：记忆的碎片",
+      "initialMessage": "你真的想了解她的故事吗？这可能改变你的一生。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "narration", "text": "守护者沉默了许久，似乎在权衡着什么。" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "如果你真的想知道...那就跟我来吧。" },
+            { "type": "narration", "text": "守护者缓缓说道。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "narration", "text": "他转身走向陨石坑深处，我紧随其后。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [
+            { "type": "narration", "text": "穿过一道隐形的屏障，我们来到了一个巨大的地下空间。" }
+          ]
+        },
+        {
+          "id": "p5",
+          "parts": [
+            { "type": "narration", "text": "这里布满了各种高科技设备，但都蒙上了厚厚的灰尘。" }
+          ]
+        },
+        {
+          "id": "p6",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这是她的实验室。三千年了，我一直在这里等待。" },
+            { "type": "narration", "text": "守护者轻声说道。" }
+          ]
+        },
+        {
+          "id": "p7",
+          "parts": [
+            { "type": "narration", "text": "他走到一台巨大的机器前，轻轻抚摸着冰冷的金属外壳。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p7",
+          "condition": "user_interacted",
+          "nextParagraphs": ["p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15"]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p8",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这台机器可以重现过去的记忆。你想看看吗？" },
+            { "type": "narration", "text": "守护者问道。" }
+          ]
+        },
+        {
+          "id": "p9",
+          "parts": [
+            { "type": "narration", "text": "我点了点头，心跳加速。" }
+          ]
+        },
+        {
+          "id": "p10",
+          "parts": [
+            { "type": "narration", "text": "守护者启动了机器，一道柔和的光芒笼罩了我们。" }
+          ]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "narration", "text": "周围的景象开始扭曲，时间仿佛倒流。" }
+          ]
+        },
+        {
+          "id": "p12",
+          "parts": [
+            { "type": "narration", "text": "我看到了三千年前的场景——一个年轻的女科学家正在实验室里忙碌着。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "narration", "text": "她有着一头银色的长发，眼中闪烁着智慧的光芒。" }
+          ]
+        },
+        {
+          "id": "p14",
+          "parts": [
+            { "type": "narration", "text": "她正在小心翼翼地培育着那朵玫瑰，眼中充满了爱意。" }
+          ]
+        },
+        {
+          "id": "p15",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "那就是她。她的名字叫艾莉亚。" },
+            { "type": "narration", "text": "守护者的声音中带着一丝颤抖。" }
+          ]
+        }
+      ],
+      "ending": {
+        "type": "choice",
+        "text": "记忆渐渐消散，守护者看着我，眼中闪烁着期待的光芒。",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "询问艾莉亚的去向",
+            "nextChapter": 3,
+            "dialoguePrompt": "她后来去了哪里？"
+          },
+          {
+            "id": "opt2",
+            "text": "询问玫瑰的秘密",
+            "nextChapter": 3,
+            "dialoguePrompt": "这朵玫瑰到底有什么特别之处？"
+          },
+          {
+            "id": "opt3",
+            "text": "表示愿意继续探索",
+            "nextChapter": 3,
+            "dialoguePrompt": "我想了解更多关于这个故事。"
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "title": "第三章：玫瑰的秘密",
+      "initialMessage": "这朵玫瑰...它承载着艾莉亚所有的希望和梦想。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "narration", "text": "守护者深吸了一口气，仿佛在整理着思绪。" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "艾莉亚...她是一个天才植物学家。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "她发现了一种特殊的能量，可以让植物在极端环境下生存。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这朵玫瑰，就是她最伟大的作品。" }
+          ]
+        },
+        {
+          "id": "p5",
+          "parts": [
+            { "type": "narration", "text": "守护者走到玫瑰前，轻轻抚摸着花瓣。" }
+          ]
+        },
+        {
+          "id": "p6",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "它不仅仅是一朵花。它是一个生命维持系统，一个微型生态系统。" }
+          ]
+        },
+        {
+          "id": "p7",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "只要有它在，任何地方都可以变成适合生命居住的家园。" }
+          ]
+        },
+        {
+          "id": "p8",
+          "parts": [
+            { "type": "narration", "text": "我震惊地看着那朵玫瑰，心中涌起一股难以言喻的感动。" }
+          ]
+        },
+        {
+          "id": "p9",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "这就是为什么她要守护它..." },
+            { "type": "narration", "text": "我追问道。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p9",
+          "condition": "user_interacted",
+          "nextParagraphs": ["p10", "p11", "p12", "p13", "p14", "p15"]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p10",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "是的。她希望有一天，这朵玫瑰能够帮助人类在宇宙中找到新的家园。" },
+            { "type": "narration", "text": "守护者点了点头。" }
+          ]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "那她为什么离开了？" },
+            { "type": "narration", "text": "我忍不住问道。" }
+          ]
+        },
+        {
+          "id": "p12",
+          "parts": [
+            { "type": "narration", "text": "守护者沉默了片刻，然后缓缓说道：" },
+            { "type": "dialogue", "speaker": "守护者", "text": "她收到了一个求救信号。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "一个遥远的星球上，有生命正在消逝。她决定去帮助他们。" }
+          ]
+        },
+        {
+          "id": "p14",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "她把玫瑰交给我，让我守护它，直到有人能够理解它的真正含义。" }
+          ]
+        },
+        {
+          "id": "p15",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "现在，我终于等到了那个人。" }
+          ]
+        }
+      ],
+      "ending": {
+        "type": "choice",
+        "text": "守护者看着我，眼中闪烁着希望的光芒。",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "表示愿意继承艾莉亚的遗志",
+            "nextChapter": 4,
+            "dialoguePrompt": "我会帮助她完成这个梦想。"
+          },
+          {
+            "id": "opt2",
+            "text": "询问如何使用玫瑰",
+            "nextChapter": 4,
+            "dialoguePrompt": "我该如何使用这朵玫瑰？"
+          },
+          {
+            "id": "opt3",
+            "text": "表示想要寻找艾莉亚",
+            "nextChapter": 4,
+            "dialoguePrompt": "也许我们可以一起去找她。"
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "title": "第四章：新的旅程",
+      "initialMessage": "准备好了吗？我们的旅程即将开始。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "narration", "text": "守护者看着我，眼中闪烁着复杂的光芒。" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "你真的愿意...帮助她？" },
+            { "type": "narration", "text": "守护者问道。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "narration", "text": "我坚定地点了点头。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "那么，跟我来吧。" },
+            { "type": "narration", "text": "守护者转身走向实验室深处。" }
+          ]
+        },
+        {
+          "id": "p5",
+          "parts": [
+            { "type": "narration", "text": "我们穿过一道道门，来到了一个巨大的飞船停机坪。" }
+          ]
+        },
+        {
+          "id": "p6",
+          "parts": [
+            { "type": "narration", "text": "一艘银色的飞船静静地停在那里，虽然经历了三千年的岁月，却依然闪烁着金属的光泽。" }
+          ]
+        },
+        {
+          "id": "p7",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这是艾莉亚的飞船。它一直在等待新的主人。" },
+            { "type": "narration", "text": "守护者轻声说道。" }
+          ]
+        },
+        {
+          "id": "p8",
+          "parts": [
+            { "type": "narration", "text": "我看着那艘飞船，心中涌起一股难以言喻的激动。" }
+          ]
+        },
+        {
+          "id": "p9",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "我们...真的可以找到她吗？" },
+            { "type": "narration", "text": "我追问道。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p9",
+          "condition": "user_interacted",
+          "nextParagraphs": ["p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20"]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p10",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "只要我们相信，就一定可以。" },
+            { "type": "narration", "text": "守护者点了点头。" }
+          ]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "narration", "text": "我们登上了飞船，守护者熟练地启动了引擎。" }
+          ]
+        },
+        {
+          "id": "p12",
+          "parts": [
+            { "type": "narration", "text": "飞船缓缓升空，离开了这个荒凉的星球。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "narration", "text": "我看着窗外渐渐远去的玫瑰，心中充满了希望。" }
+          ]
+        },
+        {
+          "id": "p14",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "我们的旅程，才刚刚开始。" },
+            { "type": "narration", "text": "守护者说道。" }
+          ]
+        },
+        {
+          "id": "p15",
+          "parts": [
+            { "type": "narration", "text": "我点了点头，望向无尽的星空。" }
+          ]
+        },
+        {
+          "id": "p16",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "无论前方有什么，我都会坚持下去。" },
+            { "type": "narration", "text": "我坚定地说道。" }
+          ]
+        },
+        {
+          "id": "p17",
+          "parts": [
+            { "type": "narration", "text": "因为我知道，这不仅仅是为了艾莉亚。" }
+          ]
+        },
+        {
+          "id": "p18",
+          "parts": [
+            { "type": "narration", "text": "更是为了所有在宇宙中寻找家园的生命。" }
+          ]
+        },
+        {
+          "id": "p19",
+          "parts": [
+            { "type": "narration", "text": "而这朵玫瑰，将指引我们前进的方向。" }
+          ]
+        },
+        {
+          "id": "p20",
+          "parts": [
+            { "type": "narration", "text": "而这朵玫瑰，将指引我们前进的方向。" }
+          ]
+        }
+      ],
+      "ending": {
+        "type": "choice",
+        "text": "飞船驶入超光速通道，星辰在我们身边拉成一道道流光。",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "询问目的地",
+            "nextChapter": 5,
+            "dialoguePrompt": "我们要去哪里？"
+          },
+          {
+            "id": "opt2",
+            "text": "询问艾莉亚的线索",
+            "nextChapter": 5,
+            "dialoguePrompt": "你有什么关于艾莉亚的线索吗？"
+          },
+          {
+            "id": "opt3",
+            "text": "查看飞船系统",
+            "nextChapter": 5,
+            "dialoguePrompt": "这艘飞船有什么特别的功能？"
+          }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "title": "第五章：星际迷航",
+      "initialMessage": "根据艾莉亚留下的星图，我们的第一个目的地是'Kepler-186f'星系。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "narration", "text": "守护者将一张星图投射到控制台上。" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这是艾莉亚最后一次更新星图时标记的位置。" },
+            { "type": "narration", "text": "守护者指着星图上闪烁的红点说道。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "Kepler-186f...那不是一颗宜居行星吗？" },
+            { "type": "narration", "text": "我惊讶地问道。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "曾经是。但根据艾莉亚的记录，那里发生了某种灾难。" }
+          ]
+        },
+        {
+          "id": "p5",
+          "parts": [
+            { "type": "narration", "text": "守护者的眼中闪过一丝担忧。" }
+          ]
+        },
+        {
+          "id": "p6",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "她去那里是为了拯救一个濒临灭绝的文明。" }
+          ]
+        },
+        {
+          "id": "p7",
+          "parts": [
+            { "type": "narration", "text": "我看着星图，心中涌起一股不安。" }
+          ]
+        },
+        {
+          "id": "p8",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "如果那里真的发生了灾难，那艾莉亚她..." },
+            { "type": "narration", "text": "我的声音有些颤抖。" }
+          ]
+        },
+        {
+          "id": "p9",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "不要担心。艾莉亚比任何人都强大。" },
+            { "type": "narration", "text": "守护者安慰道。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p9",
+          "condition": "user_interacted",
+          "nextParagraphs": ["p10", "p11", "p12", "p13", "p14", "p15"]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p10",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "而且，这朵玫瑰会指引我们找到她。" }
+          ]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "narration", "text": "守护者走到玫瑰前，轻轻抚摸着花瓣。" }
+          ]
+        },
+        {
+          "id": "p12",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这朵玫瑰与艾莉亚有着某种特殊的联系。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "只要我们靠近她，玫瑰就会发出微弱的光芒。" }
+          ]
+        },
+        {
+          "id": "p14",
+          "parts": [
+            { "type": "narration", "text": "我看着那朵玫瑰，它静静地悬浮在力场中，仿佛在等待着什么。" }
+          ]
+        },
+        {
+          "id": "p15",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "那我们现在就出发吧。" },
+            { "type": "narration", "text": "我坚定地说道。" }
+          ]
+        }
+      ],
+      "ending": {
+        "type": "choice",
+        "text": "飞船进入超光速航行，我们踏上了寻找艾莉亚的旅程。",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "询问航行时间",
+            "nextChapter": 6,
+            "dialoguePrompt": "我们要多久才能到达？"
+          },
+          {
+            "id": "opt2",
+            "text": "询问玫瑰的更多秘密",
+            "nextChapter": 6,
+            "dialoguePrompt": "这朵玫瑰还有什么其他的能力吗？"
+          },
+          {
+            "id": "opt3",
+            "text": "准备迎接挑战",
+            "nextChapter": 6,
+            "dialoguePrompt": "无论前方有什么，我都会做好准备。"
+          }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "title": "第六章：失落的信号",
+      "initialMessage": "警告。检测到微弱的信号源，来自Kepler-186f星系。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "narration", "text": "飞船的警报声突然响起，打破了舱内的宁静。" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "dialogue", "speaker": "系统", "text": "警告。检测到微弱的信号源，来自Kepler-186f星系。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "narration", "text": "守护者立刻冲到控制台前，手指在键盘上飞快地敲击着。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这个信号...它的频率和艾莉亚的通讯器完全一致！" },
+            { "type": "narration", "text": "守护者激动地说道。" }
+          ]
+        },
+        {
+          "id": "p5",
+          "parts": [
+            { "type": "narration", "text": "我的心跳加速，难道我们真的找到她了？" }
+          ]
+        },
+        {
+          "id": "p6",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "是她吗？她还活着？" },
+            { "type": "narration", "text": "我追问道。" }
+          ]
+        },
+        {
+          "id": "p7",
+          "parts": [
+            { "type": "narration", "text": "守护者沉默了片刻，然后缓缓说道：" }
+          ]
+        },
+        {
+          "id": "p8",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "信号很微弱，而且...它似乎是一个循环播放的求救信号。" }
+          ]
+        },
+        {
+          "id": "p9",
+          "parts": [
+            { "type": "narration", "text": "我的心沉了下去。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p9",
+          "condition": "user_interacted",
+          "nextParagraphs": ["p10", "p11", "p12", "p13", "p14", "p15"]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p10",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "但无论如何，我们都要去看看。" },
+            { "type": "narration", "text": "守护者坚定地说道。" }
+          ]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "narration", "text": "飞船调整了航向，朝着信号源飞去。" }
+          ]
+        },
+        {
+          "id": "p12",
+          "parts": [
+            { "type": "narration", "text": "随着我们越来越接近，Kepler-186f的景象逐渐清晰起来。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "narration", "text": "这颗曾经美丽的星球，现在却是一片废墟。" }
+          ]
+        },
+        {
+          "id": "p14",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "这里...到底发生了什么？" },
+            { "type": "narration", "text": "我震惊地看着窗外的景象。" }
+          ]
+        },
+        {
+          "id": "p15",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "我们很快就会知道答案。" },
+            { "type": "narration", "text": "守护者说道。" }
+          ]
+        }
+      ],
+      "ending": {
+        "type": "choice",
+        "text": "飞船缓缓降落在废墟之上，我们准备探索这个神秘的星球。",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "直接前往信号源",
+            "nextChapter": 7,
+            "dialoguePrompt": "我们直接去信号源那里吧。"
+          },
+          {
+            "id": "opt2",
+            "text": "先扫描周围环境",
+            "nextChapter": 7,
+            "dialoguePrompt": "我们应该先了解一下这里的情况。"
+          },
+          {
+            "id": "opt3",
+            "text": "询问守护者的意见",
+            "nextChapter": 7,
+            "dialoguePrompt": "你觉得我们应该怎么做？"
+          }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "title": "第七章：文明的遗迹",
+      "initialMessage": "这里曾经是一个高度发达的文明，但现在只剩下废墟。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "narration", "text": "我们走出飞船，踏上了这片荒凉的土地。" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "narration", "text": "到处都是倒塌的建筑和破碎的机械，仿佛一场巨大的灾难曾经降临在这里。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "这里...曾经有人居住吗？" },
+            { "type": "narration", "text": "我轻声问道。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "是的。根据艾莉亚的记录，这里曾经生活着一个名为'Keplerian'的文明。" }
+          ]
+        },
+        {
+          "id": "p5",
+          "parts": [
+            { "type": "narration", "text": "守护者环顾四周，眼中闪过一丝悲伤。" }
+          ]
+        },
+        {
+          "id": "p6",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "他们是一个和平的文明，致力于探索宇宙的奥秘。" }
+          ]
+        },
+        {
+          "id": "p7",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "那他们为什么会..." },
+            { "type": "narration", "text": "我欲言又止。" }
+          ]
+        },
+        {
+          "id": "p8",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "一场突如其来的星际战争摧毁了一切。" },
+            { "type": "narration", "text": "守护者沉重地说道。" }
+          ]
+        },
+        {
+          "id": "p9",
+          "parts": [
+            { "type": "narration", "text": "我震惊地看着这片废墟，心中涌起一股难以言喻的悲伤。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p9",
+          "condition": "user_interacted",
+          "nextParagraphs": ["p10", "p11", "p12", "p13", "p14", "p15"]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p10",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "艾莉亚来的时候，这里已经是一片废墟了。" }
+          ]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "那她来这里是为了什么？" },
+            { "type": "narration", "text": "我追问道。" }
+          ]
+        },
+        {
+          "id": "p12",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "她发现了一些幸存者的信号。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "她希望能够帮助他们重建家园。" }
+          ]
+        },
+        {
+          "id": "p14",
+          "parts": [
+            { "type": "narration", "text": "守护者指向远处的一座建筑。" }
+          ]
+        },
+        {
+          "id": "p15",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "信号就是从那里发出的。我们走吧。" }
+          ]
+        }
+      ],
+      "ending": {
+        "type": "choice",
+        "text": "我们朝着信号源走去，心中充满了期待和不安。",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "询问艾莉亚可能的位置",
+            "nextChapter": 8,
+            "dialoguePrompt": "你觉得艾莉亚会在那里吗？"
+          },
+          {
+            "id": "opt2",
+            "text": "询问幸存者的情况",
+            "nextChapter": 8,
+            "dialoguePrompt": "那些幸存者现在怎么样了？"
+          },
+          {
+            "id": "opt3",
+            "text": "保持警惕",
+            "nextChapter": 8,
+            "dialoguePrompt": "我们要小心一点，这里可能还有危险。"
+          }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "title": "第八章：艾莉亚的足迹",
+      "initialMessage": "这里...有艾莉亚留下的痕迹。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "narration", "text": "我们走进那座建筑，里面布满了灰尘和蛛网。" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "narration", "text": "但就在我们深入探索时，守护者突然停下了脚步。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这里...有艾莉亚留下的痕迹。" },
+            { "type": "narration", "text": "守护者的声音有些颤抖。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [
+            { "type": "narration", "text": "他走到一面墙前，轻轻抚摸着上面的刻痕。" }
+          ]
+        },
+        {
+          "id": "p5",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这是她的标记。她曾经来过这里。" }
+          ]
+        },
+        {
+          "id": "p6",
+          "parts": [
+            { "type": "narration", "text": "我看着那些刻痕，心中涌起一股激动。" }
+          ]
+        },
+        {
+          "id": "p7",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "那她现在在哪里？" },
+            { "type": "narration", "text": "我追问道。" }
+          ]
+        },
+        {
+          "id": "p8",
+          "parts": [
+            { "type": "narration", "text": "守护者沉默了片刻，然后指向建筑深处。" }
+          ]
+        },
+        {
+          "id": "p9",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "信号是从那里发出的。我们继续前进吧。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p9",
+          "condition": "user_interacted",
+          "nextParagraphs": ["p10", "p11", "p12", "p13", "p14", "p15"]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p10",
+          "parts": [
+            { "type": "narration", "text": "我们继续深入，周围的景象越来越诡异。" }
+          ]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "narration", "text": "墙壁上闪烁着微弱的蓝光，仿佛某种古老的能量正在流动。" }
+          ]
+        },
+        {
+          "id": "p12",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "这是什么？" },
+            { "type": "narration", "text": "我好奇地问道。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这是Keplerian文明的能量系统。它还在运行。" }
+          ]
+        },
+        {
+          "id": "p14",
+          "parts": [
+            { "type": "narration", "text": "守护者惊讶地说道。" }
+          ]
+        },
+        {
+          "id": "p15",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这意味着...这里可能还有幸存者。" }
+          ]
+        }
+      ],
+      "ending": {
+        "type": "choice",
+        "text": "我们终于来到了信号源所在的地方，一扇巨大的金属门挡在我们面前。",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "尝试打开门",
+            "nextChapter": 9,
+            "dialoguePrompt": "我们打开这扇门吧。"
+          },
+          {
+            "id": "opt2",
+            "text": "先扫描门后的情况",
+            "nextChapter": 9,
+            "dialoguePrompt": "我们应该先看看门后面有什么。"
+          },
+          {
+            "id": "opt3",
+            "text": "询问守护者",
+            "nextChapter": 9,
+            "dialoguePrompt": "你知道怎么打开这扇门吗？"
+          }
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "title": "第九章：最后的考验",
+      "initialMessage": "这扇门...需要特殊的密码才能打开。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "narration", "text": "守护者仔细检查着金属门，眉头紧锁。" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这扇门...需要特殊的密码才能打开。" },
+            { "type": "narration", "text": "守护者说道。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "密码？你知道密码是什么吗？" },
+            { "type": "narration", "text": "我追问道。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "密码是艾莉亚设置的。只有她知道。" }
+          ]
+        },
+        {
+          "id": "p5",
+          "parts": [
+            { "type": "narration", "text": "守护者沉默了片刻，然后突然说道：" }
+          ]
+        },
+        {
+          "id": "p6",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "等等...这朵玫瑰可能会帮助我们。" }
+          ]
+        },
+        {
+          "id": "p7",
+          "parts": [
+            { "type": "narration", "text": "守护者走到玫瑰前，将它靠近金属门。" }
+          ]
+        },
+        {
+          "id": "p8",
+          "parts": [
+            { "type": "narration", "text": "奇迹发生了——玫瑰开始发出柔和的光芒，金属门也随之震动起来。" }
+          ]
+        },
+        {
+          "id": "p9",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "它...它真的在回应！" },
+            { "type": "narration", "text": "我惊讶地说道。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p9",
+          "condition": "user_interacted",
+          "nextParagraphs": ["p10", "p11", "p12", "p13", "p14", "p15"]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p10",
+          "parts": [
+            { "type": "narration", "text": "金属门缓缓打开，露出了里面的景象。" }
+          ]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "narration", "text": "里面是一个巨大的控制室，充满了各种高科技设备。" }
+          ]
+        },
+        {
+          "id": "p12",
+          "parts": [
+            { "type": "narration", "text": "在控制室的中央，有一个巨大的休眠舱。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "那是...艾莉亚！" },
+            { "type": "narration", "text": "守护者激动地喊道。" }
+          ]
+        },
+        {
+          "id": "p14",
+          "parts": [
+            { "type": "narration", "text": "我冲到休眠舱前，透过玻璃看到了里面沉睡的身影。" }
+          ]
+        },
+        {
+          "id": "p15",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "她...她还活着！" },
+            { "type": "narration", "text": "我激动地说道。" }
+          ]
+        }
+      ],
+      "ending": {
+        "type": "choice",
+        "text": "我们终于找到了艾莉亚，但她还在沉睡中。",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "尝试唤醒她",
+            "nextChapter": 10,
+            "dialoguePrompt": "我们怎么才能唤醒她？"
+          },
+          {
+            "id": "opt2",
+            "text": "检查她的状况",
+            "nextChapter": 10,
+            "dialoguePrompt": "她现在的状况怎么样？"
+          },
+          {
+            "id": "opt3",
+            "text": "询问守护者",
+            "nextChapter": 10,
+            "dialoguePrompt": "你知道怎么唤醒她吗？"
+          }
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "title": "第十章：重逢",
+      "initialMessage": "终于...我等到了这一天。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "narration", "text": "守护者颤抖着手，轻轻抚摸着休眠舱的玻璃。" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "终于...我等到了这一天。" },
+            { "type": "narration", "text": "守护者的声音中充满了情感。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "我们怎么才能唤醒她？" },
+            { "type": "narration", "text": "我追问道。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "这朵玫瑰是关键。它承载着艾莉亚的生命能量。" }
+          ]
+        },
+        {
+          "id": "p5",
+          "parts": [
+            { "type": "narration", "text": "守护者将玫瑰放在休眠舱的控制台上。" }
+          ]
+        },
+        {
+          "id": "p6",
+          "parts": [
+            { "type": "narration", "text": "玫瑰开始发出耀眼的光芒，整个控制室都被照亮了。" }
+          ]
+        },
+        {
+          "id": "p7",
+          "parts": [
+            { "type": "narration", "text": "休眠舱的玻璃缓缓打开，艾莉亚睁开了眼睛。" }
+          ]
+        },
+        {
+          "id": "p8",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "Ares...是你吗？" },
+            { "type": "narration", "text": "她的声音虚弱但清晰。" }
+          ]
+        },
+        {
+          "id": "p9",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "是我，艾莉亚。我一直在等你。" },
+            { "type": "narration", "text": "守护者激动地说道。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p9",
+          "condition": "user_interacted",
+          "nextParagraphs": ["p10", "p11", "p12", "p13", "p14", "p15"]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p10",
+          "parts": [
+            { "type": "narration", "text": "艾莉亚转过头，看到了我。" }
+          ]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "你是谁？为什么会在这里？" }
+          ]
+        },
+        {
+          "id": "p12",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "我叫林晓，是一名植物学家。我发现了那朵玫瑰，然后遇到了Ares。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "玫瑰...它还在？" },
+            { "type": "narration", "text": "艾莉亚惊讶地问道。" }
+          ]
+        },
+        {
+          "id": "p14",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "是的，它一直都在。而且，它帮助我们找到了你。" }
+          ]
+        },
+        {
+          "id": "p15",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "谢谢你们...真的非常感谢。" },
+            { "type": "narration", "text": "艾莉亚感动地说道。" }
+          ]
+        }
+      ],
+      "ending": {
+        "type": "choice",
+        "text": "艾莉亚终于苏醒了，我们的冒险似乎告一段落，但新的旅程才刚刚开始。",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "询问艾莉亚的经历",
+            "nextChapter": 11,
+            "dialoguePrompt": "这些年你经历了什么？"
+          },
+          {
+            "id": "opt2",
+            "text": "询问未来的计划",
+            "nextChapter": 11,
+            "dialoguePrompt": "接下来我们该做什么？"
+          },
+          {
+            "id": "opt3",
+            "text": "表示愿意继续帮助",
+            "nextChapter": 11,
+            "dialoguePrompt": "我会继续帮助你们完成梦想。"
+          }
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "title": "第十一章：新的开始",
+      "initialMessage": "我们的旅程还没有结束，它才刚刚开始。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "narration", "text": "艾莉亚缓缓坐起身，虽然身体还很虚弱，但眼中闪烁着坚定的光芒。" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "这些年，我一直在寻找拯救这个宇宙的方法。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "Keplerian文明的毁灭让我意识到，和平是多么脆弱。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "我创造了这朵玫瑰，希望能够帮助更多的文明找到新的家园。" }
+          ]
+        },
+        {
+          "id": "p5",
+          "parts": [
+            { "type": "narration", "text": "她看着那朵玫瑰，眼中充满了爱意。" }
+          ]
+        },
+        {
+          "id": "p6",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "但现在，我意识到一个人的力量是有限的。" }
+          ]
+        },
+        {
+          "id": "p7",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "我需要伙伴，需要志同道合的人一起完成这个梦想。" }
+          ]
+        },
+        {
+          "id": "p8",
+          "parts": [
+            { "type": "narration", "text": "她转向我，伸出了手。" }
+          ]
+        },
+        {
+          "id": "p9",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "林晓，你愿意加入我们吗？" },
+            { "type": "narration", "text": "艾莉亚真诚地问道。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p9",
+          "condition": "user_interacted",
+          "nextParagraphs": ["p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20"]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p10",
+          "parts": [
+            { "type": "narration", "text": "我看着她的眼睛，心中涌起一股暖流。" }
+          ]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "我愿意。这是我一生中最正确的决定。" },
+            { "type": "narration", "text": "我坚定地说道。" }
+          ]
+        },
+        {
+          "id": "p12",
+          "parts": [
+            { "type": "narration", "text": "艾莉亚露出了灿烂的笑容，握住了我的手。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "谢谢你，林晓。从今天起，我们就是伙伴了。" }
+          ]
+        },
+        {
+          "id": "p14",
+          "parts": [
+            { "type": "narration", "text": "守护者也走了过来，眼中闪烁着喜悦的光芒。" }
+          ]
+        },
+        {
+          "id": "p15",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "我们的团队终于完整了。" }
+          ]
+        },
+        {
+          "id": "p16",
+          "parts": [
+            { "type": "narration", "text": "我们三人站在一起，望向窗外的星空。" }
+          ]
+        },
+        {
+          "id": "p17",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "我们的旅程还没有结束，它才刚刚开始。" }
+          ]
+        },
+        {
+          "id": "p18",
+          "parts": [
+            { "type": "narration", "text": "她指向无尽的星空，眼中充满了希望。" }
+          ]
+        },
+        {
+          "id": "p19",
+          "parts": [
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "还有无数的文明在等待我们的帮助，还有无数的星球等待着生命的降临。" }
+          ]
+        },
+        {
+          "id": "p20",
+          "parts": [
+            { "type": "narration", "text": "而这朵玫瑰，将指引我们前进的方向。" }
+          ]
+        }
+      ],
+      "isLastChapter": true,
+      "ending": {
+        "type": "finished",
+        "text": "故事结束了，但新的旅程才刚刚开始...",
+        "nextStory": null
+      }
+    }
+  ],
+  "settings": {
+    "autoProgress": true,
+    "dialogueRequired": true,
+    "minDialoguesPerChapter": 1,
+    "allowSkip": false
+  }
+}
