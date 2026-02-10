@@ -1,0 +1,11 @@
+export const NOVELS = [
+  {
+    id: 1,
+    title: "星际穿越：最后的玫瑰",
+    author: "银河漫游者",
+    cover: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop",
+    description: "在数亿光年外的废弃星球，一位植物学家发现了一朵在真空绽放的玫瑰，而它的守护者竟然是...",
+    tags: ["科幻", "浪漫", "冒险"],
+    file: "星际穿越：最后的玫瑰.json"
+  }
+];

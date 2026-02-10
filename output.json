@@ -1,0 +1,431 @@
+{
+  "PD Performance": [
+    {
+      "title": "PD Instance",
+      "description": "",
+      "expr": "count(     group by (label0,label1) (         label_replace(             label_replace(                 label_replace(                     sum by (exported_endpoint)(                         glm_watched_endpoints{region=~\"$region\",job=~\"$namespace/$app-lb\",cluster=\"\",pool =~ \"^$|^($pool1);($pool2);($pool3);;;$\"}                     ) > 0,                     \"label0\", \"$1\",                     \"exported_endpoint\", \"^([^:]+):([^:]+)(?::([^:]+))?$\"                     ),                 \"label1\", \"$2\",                 \"exported_endpoint\", \"^([^:]+):([^:]+)(?::([^:]+))?$\"             ),             \"label2\", \"$3\",         \"exported_endpoint\", \"^([^:]+):([^:]+)(?::([^:]+))?$\"         )     ) )"
+    },
+    {
+      "title": "PD Instance",
+      "description": "",
+      "expr": "count by (label0)(     count by (label0,label1) (         label_replace(             label_replace(                 label_replace(                     sum by (exported_endpoint)(                         glm_watched_endpoints{region=~\"$region\",job=~\"$namespace/$app-lb\",cluster=\"\",pool =~ \"^$|^($pool1);($pool2);($pool3);;;$\"}                     ) > 0,                     \"label0\", \"$1\",                     \"exported_endpoint\", \"^([^:]+):([^:]+)(?::([^:]+))?$\"                     ),                 \"label1\", \"$2\",                 \"exported_endpoint\", \"^([^:]+):([^:]+)(?::([^:]+))?$\"             ),             \"label2\", \"$3\",         \"exported_endpoint\", \"^([^:]+):([^:]+)(?::([^:]+))?$\"         )     ) )"
+    },
+    {
+      "title": "Pods by dprank",
+      "description": "",
+      "expr": "count(sum(glm_watched_endpoints{region=~\"$region\",job=~\"$namespace/$app-lb\",cluster=\"\",pool =~ \"^$|^($pool1);($pool2);($pool3);;;$\"}) by (exported_endpoint) > 0)"
+    },
+    {
+      "title": "Pods by dprank",
+      "description": "",
+      "expr": "count by (label0) (     label_replace(         label_replace(             label_replace(                 sum by (exported_endpoint)(                     glm_watched_endpoints{region=~\"$region\",job=~\"$namespace/$app-lb\",cluster=\"\",pool =~ \"^$|^($pool1);($pool2);($pool3);;;$\"}                 ) > 0,                 \"label0\", \"$1\",                 \"exported_endpoint\", \"^([^:]+):([^:]+)(?::([^:]+))?$\"                 ),             \"label1\", \"$2\",             \"exported_endpoint\", \"^([^:]+):([^:]+)(?::([^:]+))?$\"         ),         \"label2\", \"$3\",     \"exported_endpoint\", \"^([^:]+):([^:]+)(?::([^:]+))?$\"     ) )"
+    },
+    {
+      "title": "[Prefill] E2E Request Latency in $region",
+      "description": "End-to-end request latency in seconds (Prefill-Decode disaggregated)",
+      "expr": "sum by (job)(rate(sglang:e2e_request_latency_seconds_sum{region=~\"$region\",cluster=\"\",job=~\"$namespace/$app-prefill\"}[$__rate_interval]))  / sum by (job)(rate(sglang:e2e_request_latency_seconds_count{region=~\"$region\",cluster=\"\",job=~\"$namespace/$app-prefill\"}[$__rate_interval]))"
+    },
+    {
+      "title": "[Prefill] SGL Request",
+      "description": "Number of requests processed. (Prefill-Decode disaggregated)",
+      "expr": "sum(     rate(         sglang:num_requests_total{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"}[$__rate_interval]     ) ) by (region)"
+    },
+    {
+      "title": "[Decode] Time To First Token",
+      "description": "time to first token in seconds. (Prefill-Decode disaggregated) \nIn PD-disaggregated mode, decode instance is responsible for output the first token",
+      "expr": "histogram_quantile( 0.99,   sum by (le) (       rate(         sglang:time_to_first_token_seconds_bucket       {cluster=\"\",job=~\"$namespace/$app-decode\",region=~\"$region\"}[1m]       )   ) )"
+    },
+    {
+      "title": "[Decode] First Token Latency (By Cluster)",
+      "description": "first-token latency in seconds.  (Prefill-Decode disaggregated)",
+      "expr": "sum(rate(sglang:time_to_first_token_seconds_sum{region=~\"$region\",cluster=\"\",job=~\"$namespace/$app-decode\"}[$__rate_interval])) by (region) / sum(rate(sglang:time_to_first_token_seconds_count{region=~\"$region\",cluster=\"\",job=~\"$namespace/$app-decode\"}[$__rate_interval])) by (region) * 1000"
+    },
+    {
+      "title": "[Decode] E2E Request Latency in $region",
+      "description": "End-to-end request latency in seconds (Prefill-Decode disaggregated)",
+      "expr": "histogram_quantile(0.99, sum by(le) (rate(sglang:e2e_request_latency_seconds_bucket{region=~\"$region\",cluster=\"\",job=~\"$namespace/$app-decode\"}[$__rate_interval])))"
+    },
+    {
+      "title": "[Decode] SGL Request",
+      "description": "Number of requests processed. (Prefill-Decode disaggregated)",
+      "expr": "sum(     rate(         sglang:num_requests_total{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"}[$__rate_interval]     ) ) by (region)"
+    },
+    {
+      "title": "[Decode] Inter Token Latency",
+      "description": "inter-token latency in seconds. inter-token即输出token间延迟，即decode latency (Prefill-Decode disaggregated)",
+      "expr": "sum(rate(sglang:inter_token_latency_seconds_sum{region=~\"$region\",cluster=\"\",job=~\"$namespace/$app-decode\"}[$__rate_interval]))  / sum(rate(sglang:inter_token_latency_seconds_count{region=~\"$region\",cluster=\"\",job=~\"$namespace/$app-decode\"}[$__rate_interval])) * 1000"
+    },
+    {
+      "title": "[Decode] Inter Token Latency (By Cluster)",
+      "description": "inter-token latency in seconds. inter-token即输出token间延迟，即decode latency (Prefill-Decode disaggregated)",
+      "expr": "sum(rate(sglang:inter_token_latency_seconds_sum{region=~\"$region\",cluster=\"\",job=~\"$namespace/$app-prefill\"}[$__rate_interval])) by (region) / sum(rate(sglang:inter_token_latency_seconds_count{region=~\"$region\",cluster=\"\",job=~\"$namespace/$app-prefill\"}[$__rate_interval])) by (region) * 1000"
+    },
+    {
+      "title": "[Prefill] Running Requests in $region",
+      "description": "The number of running requests. (Prefill-Decode disaggregated)",
+      "expr": "avg(     sglang:num_running_reqs{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"} )"
+    },
+    {
+      "title": "[Prefill] Running Request",
+      "description": "",
+      "expr": "max(sglang:num_running_reqs{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"}) by (pod)"
+    },
+    {
+      "title": "[Prefill] Avg Queue Size",
+      "description": "The number of requests in the waiting queue. (Prefill-Decode disaggregated)",
+      "expr": "avg(sglang:num_queue_reqs{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"})"
+    },
+    {
+      "title": "[Prefill] Queue Size",
+      "description": "",
+      "expr": "max(sglang:num_queue_reqs{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"}) by (pod)"
+    },
+    {
+      "title": "[Decode] Running Requests in $region",
+      "description": "The number of running requests. (Prefill-Decode disaggregated)",
+      "expr": "avg(     sglang:num_running_reqs{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"} )"
+    },
+    {
+      "title": "[Decode] Running Request",
+      "description": "",
+      "expr": "max(sglang:num_running_reqs{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"}) by (pod)"
+    },
+    {
+      "title": "[Decode] Avg Queues Size",
+      "description": "The number of requests in the waiting queue. (Prefill-Decode disaggregated)",
+      "expr": "avg(sglang:num_queue_reqs{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"})"
+    },
+    {
+      "title": "[Decode] Transfer Queue Size",
+      "description": "",
+      "expr": "max(sglang:num_decode_transfer_queue_reqs{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"}) by (pod)"
+    },
+    {
+      "title": "[Prefill] Queue Size By Instance",
+      "description": "The number of requests in the waiting queue. (Prefill-Decode disaggregated)",
+      "expr": "avg by (pod)(sglang:num_queue_reqs{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"})"
+    },
+    {
+      "title": "[Prefill] Pre-Alloc Queue Size By Instance",
+      "description": "The number of requests in the waiting queue. (Prefill-Decode disaggregated)",
+      "expr": "avg by (pod)(sglang:num_prefill_prealloc_queue_reqs{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"})"
+    },
+    {
+      "title": "[Prefill] Inflight Queue Size By Instance",
+      "description": "The number of requests in the transferring queue. (Prefill-Decode disaggregated)",
+      "expr": "avg by (pod) (sglang:num_prefill_inflight_queue_reqs{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"})"
+    },
+    {
+      "title": "[Decode] Queue Size",
+      "description": "The number of requests in the waiting queue. (Prefill-Decode disaggregated)",
+      "expr": "sum by (pod) (sglang:num_queue_reqs{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"})"
+    },
+    {
+      "title": "[Decode] Pre-Alloc Queue Size",
+      "description": "The number of requests in the waiting queue. (Prefill-Decode disaggregated)",
+      "expr": "sum by (pod)(sglang:num_decode_prealloc_queue_reqs{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"})"
+    },
+    {
+      "title": "[Decode] Transfer Queue Size",
+      "description": "The number of requests in the waiting queue. (Prefill-Decode disaggregated)",
+      "expr": "sum by (pod) (sglang:num_decode_transfer_queue_reqs{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"})"
+    },
+    {
+      "title": "[Prefill] Bootstrap Latency",
+      "description": "Prefill-side bootstrap latency (Prefill-Decode disaggregated)",
+      "expr": "avg(rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_bootstrap\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_bootstrap\"})[$__interval])"
+    },
+    {
+      "title": "[Prefill] Waiting Latency",
+      "description": "Prefill-side waiting latency, request is bootstrapped but waiting other request forwarded (Prefill-Decode disaggregated)",
+      "expr": "avg(rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_waiting\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_waiting\"})[$__interval])"
+    },
+    {
+      "title": "[Prefill] Forward Latency",
+      "description": "Prefill-side forward latency (Prefill-Decode disaggregated)",
+      "expr": "avg(rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_forward\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_forward\"})[$__interval])"
+    },
+    {
+      "title": "[Prefill] Transfer KV Cache Latency",
+      "description": "Prefill-side KV cache transfer latency (Prefill-Decode disaggregated)",
+      "expr": "avg(rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_transfer_kv_cache\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_transfer_kv_cache\"})[$__interval])"
+    },
+    {
+      "title": "[Decode] Prepare Latency",
+      "description": "Decode-side prepare latency, prepare is the fisrt stage in decode instance, before bootstrap.",
+      "expr": "avg(rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-decode\",stage=\"decode_prepare\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-decode\",stage=\"decode_prepare\"})[$__interval])"
+    },
+    {
+      "title": "[Decode] Bootstrap Latency",
+      "description": "Decode-side bootstrap latency (Prefill-Decode disaggregated)",
+      "expr": "avg(rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-decode\",stage=\"decode_bootstrap\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-decode\",stage=\"decode_bootstrap\"})[$__interval])"
+    },
+    {
+      "title": "[Decode] Transferred Latency",
+      "description": "Decode-side latency before KV cache is transferred. This includes all latency in prefill to bootstrap+forward+transfer. See prefill-side transfer latency for pure transfer latency.",
+      "expr": "avg(rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-decode\",stage=\"decode_transferred\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-decode\",stage=\"decode_transferred\"})[$__interval])"
+    },
+    {
+      "title": "[Decode] Waiting Latency",
+      "description": "Decode-side waiting latency, request is bootstrapped but waiting for batching with other request to forward, if this is high, typically the token usage is full or max_running_request is hit.",
+      "expr": "avg(rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-decode\",stage=\"decode_waiting\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-decode\",stage=\"decode_waiting\"})[$__interval])"
+    },
+    {
+      "title": "[Prefill] Bootstrap Latency By Instance",
+      "description": "Prefill-side bootstrap latency (Prefill-Decode disaggregated)",
+      "expr": "avg by (pod) (rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_bootstrap\"})[$__rate_interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_bootstrap\"})[$__rate_interval])"
+    },
+    {
+      "title": "[Prefill] Forward Latency By Instance",
+      "description": "Prefill-side forward latency (Prefill-Decode disaggregated)",
+      "expr": "avg by (pod) (rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_forward\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_forward\"})[$__interval])"
+    },
+    {
+      "title": "[Prefill] Wait Latency By Instance",
+      "description": "Prefill-side wait latency (Prefill-Decode disaggregated)",
+      "expr": "avg by (pod) (rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_waiting\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_waiting\"})[$__interval])"
+    },
+    {
+      "title": "[Prefill] Transfer Latency By Instance",
+      "description": "Prefill-side transfer latency (Prefill-Decode disaggregated)",
+      "expr": "avg by (pod) (rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_transfer_kv_cache\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-prefill\",stage=\"prefill_transfer_kv_cache\"})[$__interval])"
+    },
+    {
+      "title": "[Decode] Transferred Latency By Instance",
+      "description": "Decode-side latency before KV cache is transferred. This includes all latency in prefill to bootstrap+forward+transfer. See prefill-side transfer latency for pure transfer latency.",
+      "expr": "avg by (pod) (rate(sglang:per_stage_req_latency_seconds_sum{region=~\"$region\",job=~\"$namespace/$app-decode\",stage=\"decode_transferred\"})[$__interval] / rate(sglang:per_stage_req_latency_seconds_count{region=~\"$region\",job=~\"$namespace/$app-decode\",stage=\"decode_transferred\"})[$__interval])"
+    },
+    {
+      "title": "[Prefill] Token Usage in $region",
+      "description": "indicates the KV cache memory utilization of the server.  (Prefill-Decode disaggregated)",
+      "expr": "avg(sglang:token_usage{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"})"
+    },
+    {
+      "title": "[Prefill] Token Usage (By Cluster)",
+      "description": "indicates the KV cache memory utilization of the server.  (Prefill-Decode disaggregated)",
+      "expr": "avg(sglang:token_usage{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"}) by (region)"
+    },
+    {
+      "title": "[Prefill] Token Usage",
+      "description": "indicates the KV cache memory utilization of the server.  (Prefill-Decode disaggregated)",
+      "expr": "max(sglang:token_usage{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"}) by (pod, region)"
+    },
+    {
+      "title": "[Prefill] Cached Tokens",
+      "description": "Rate of number of cached prompt tokens. (Prefill-Decode disaggregated)",
+      "expr": "sum(rate(sglang:cached_tokens_total{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"}[$__rate_interval]))"
+    },
+    {
+      "title": "[Decode] Token Usage in $region",
+      "description": "indicates the KV cache memory utilization of the server.  (Prefill-Decode disaggregated)",
+      "expr": "avg(sglang:token_usage{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"})"
+    },
+    {
+      "title": "[Decode] Token Usage (By Cluster)",
+      "description": "indicates the KV cache memory utilization of the server.  (Prefill-Decode disaggregated)",
+      "expr": "avg(sglang:token_usage{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"}) by (region)"
+    },
+    {
+      "title": "[Decode] Token Usage",
+      "description": "indicates the KV cache memory utilization of the server.  (Prefill-Decode disaggregated)",
+      "expr": "max(sglang:token_usage{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"}) by (pod, region)"
+    },
+    {
+      "title": "[Prefill] Prefix Cache HitRate",
+      "description": "The prefix cache hit rate. (Prefill-Decode disaggregated)",
+      "expr": "avg(sglang:cache_hit_rate{region=~\"$region\",cluster=\"\",job=~\"$namespace/$app-prefill\"})"
+    },
+    {
+      "title": "[Prefill] Prefill Throughput in $region",
+      "description": "Number of prefill tokens processed (Prefill-Decode disaggregated)",
+      "expr": "sum(rate(sglang:prompt_tokens_total{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"}[$__rate_interval]))"
+    },
+    {
+      "title": "[Prefill] Token Throughput / Instance (by Cluster)",
+      "description": "",
+      "expr": "avg(rate(sglang:prompt_tokens_total{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"}[$__rate_interval])) by (region)"
+    },
+    {
+      "title": "[Prefill] Thoughput",
+      "description": "Number of prefill tokens processed. (Prefill-Decode disaggregated)",
+      "expr": "avg(rate(sglang:prompt_tokens_total{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"}[$__rate_interval])) by (pod, region)"
+    },
+    {
+      "title": "[Decode] Aborted Requests (by Cluster)",
+      "description": "",
+      "expr": "sum(     rate(sglang:num_aborted_requests_total{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"}[$__rate_interval]) ) by (region)"
+    },
+    {
+      "title": "[Prefill] Aborted Requests (by Cluster)",
+      "description": "",
+      "expr": "sum(     rate(sglang:num_aborted_requests_total{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"}[$__rate_interval]) ) by (region)"
+    },
+    {
+      "title": "[Decode] Generation Throughput in $region",
+      "description": "",
+      "expr": "avg(rate(sglang:generation_tokens_total{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"}[$__rate_interval]))"
+    },
+    {
+      "title": "[Decode] Throughput / Instance (by Cluster)",
+      "description": "",
+      "expr": "avg(     sglang:gen_throughput{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"} ) by (region)"
+    },
+    {
+      "title": "[Decode] Thoughput",
+      "description": "Number of decode tokens generated.  (Prefill-Decode disaggregated)",
+      "expr": "avg(rate(sglang:prompt_tokens_total{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"}[$__rate_interval])) by (pod, region)"
+    },
+    {
+      "title": "[Decode] Retracted Requests (by Cluster)",
+      "description": "",
+      "expr": "sum(     rate(sglang:total_retracted_reqs{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"}[$__rate_interval]) ) by (region)"
+    },
+    {
+      "title": "[Prefill] Avg iB Xmit Speed",
+      "description": "",
+      "expr": "avg(     sum by (region,node) (irate(         node_infiniband_port_data_transmitted_bytes_total{         region=~\"$region\", device=~\"mlx5_.*\"         }[$__rate_interval]     ) * 8)     * on(node) group_right(pod, namespace)     (         kube_pod_info{region=~\"$region\"}         and on(pod, namespace)         (         kube_pod_owner{owner_kind=\"ReplicaSet\", region=~\"$region\"}         and on(owner_name, namespace)         label_replace(             kube_replicaset_owner{             owner_kind=\"Deployment\", namespace=~\"$namespace\", region=~\"$region\", owner_name=~\"$app-prefill\",             },             \"owner_name\", \"$1\", \"replicaset\", \"(.*)\"         )         )     ) ) by (region, namespace, owner_name)"
+    },
+    {
+      "title": "[Prefill] Avg iB Xmit Packet Rate",
+      "description": "",
+      "expr": "avg(     sum by (region,node) (irate(         node_infiniband_port_packets_transmitted_total{         region=~\"$region\", device=~\"mlx5_.*\"         }[$__rate_interval]     ))     * on(node) group_right(pod, namespace)     (         kube_pod_info{region=~\"$region\"}         and on(pod, namespace)         (         kube_pod_owner{owner_kind=\"ReplicaSet\", region=~\"$region\"}         and on(owner_name, namespace)         label_replace(             kube_replicaset_owner{             owner_kind=\"Deployment\", namespace=~\"$namespace\", region=~\"$region\", owner_name=~\"$app-prefill\",             },             \"owner_name\", \"$1\", \"replicaset\", \"(.*)\"         )         )     ) ) by (region, namespace, owner_name)"
+    },
+    {
+      "title": "[Prefill] Avg iB Xmit Speed",
+      "description": "",
+      "expr": "avg(     sum by (region,node) (irate(         node_infiniband_port_data_transmitted_bytes_total{         region=~\"$region\", device=~\"mlx5_.*\"         }[$__rate_interval]     ) * 8)     * on(node) group_left(pod, namespace)     (         kube_pod_info{region=~\"$region\"}         and on(pod, namespace)         (         kube_pod_owner{owner_kind=\"ReplicaSet\", region=~\"$region\"}         and on(owner_name, namespace)         label_replace(             kube_replicaset_owner{             owner_kind=\"Deployment\", namespace=~\"$namespace\", region=~\"$region\", owner_name=~\"$app-prefill\",             },             \"owner_name\", \"$1\", \"replicaset\", \"(.*)\"         )         )     ) ) by (region, namespace, pod)"
+    },
+    {
+      "title": "[Decode] Accept Length Of Speculative",
+      "description": "The average acceptance length of speculative decoding. (Prefill-Decode disaggregated)",
+      "expr": "avg by (region) (sglang:spec_accept_length{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"})"
+    },
+    {
+      "title": "[Decode] Avg iB Recv Speed",
+      "description": "",
+      "expr": "avg(     sum by (region,node) (irate(         node_infiniband_port_data_received_bytes_total{         region=~\"$region\", device=~\"mlx5_.*\"         }[$__rate_interval]     ) * 8)     * on(node) group_right(pod, namespace)     (         kube_pod_info{region=~\"$region\"}         and on(pod, namespace)         (         kube_pod_owner{owner_kind=\"ReplicaSet\", region=~\"$region\"}         and on(owner_name, namespace)         label_replace(             kube_replicaset_owner{             owner_kind=\"Deployment\", namespace=~\"$namespace\", region=~\"$region\", owner_name=~\"$app-decode\",             },             \"owner_name\", \"$1\", \"replicaset\", \"(.*)\"         )         )     ) ) by (region, namespace, owner_name)"
+    },
+    {
+      "title": "[Decode] Avg iB Recv Packet Rate",
+      "description": "",
+      "expr": "avg(     sum by (region,node) (irate(         node_infiniband_port_packets_received_total{         region=~\"$region\", device=~\"mlx5_.*\"         }[$__rate_interval]     ))     * on(node) group_right(pod, namespace)     (         kube_pod_info{region=~\"$region\"}         and on(pod, namespace)         (         kube_pod_owner{owner_kind=\"ReplicaSet\", region=~\"$region\"}         and on(owner_name, namespace)         label_replace(             kube_replicaset_owner{             owner_kind=\"Deployment\", namespace=~\"$namespace\", region=~\"$region\", owner_name=~\"$app-decode\",             },             \"owner_name\", \"$1\", \"replicaset\", \"(.*)\"         )         )     ) ) by (region, namespace, owner_name)"
+    },
+    {
+      "title": "[Decode] Avg iB Recv Speed",
+      "description": "",
+      "expr": "avg(     sum by (region,node) (irate(         node_infiniband_port_data_received_bytes_total{         region=~\"$region\", device=~\"mlx5_.*\"         }[$__rate_interval]     ) * 8)     * on(node) group_left(pod, namespace)     (         kube_pod_info{region=~\"$region\"}         and on(pod, namespace)         (         kube_pod_owner{owner_kind=\"ReplicaSet\", region=~\"$region\"}         and on(owner_name, namespace)         label_replace(             kube_replicaset_owner{             owner_kind=\"Deployment\", namespace=~\"$namespace\", region=~\"$region\", owner_name=~\"$app-decode\",             },             \"owner_name\", \"$1\", \"replicaset\", \"(.*)\"         )         )     ) ) by (region, namespace, pod)"
+    },
+    {
+      "title": "[Prefill] Queue Lantency",
+      "description": "The average request queue latency for the last batch of requests in seconds.  (Prefill-Decode disaggregated)",
+      "expr": "avg(sglang:avg_request_queue_latency{region=~\"$region\",job=~\"$namespace/$app-prefill\",cluster=\"\"})"
+    },
+    {
+      "title": "[Decode] Queue Lantency",
+      "description": "The average request queue latency for the last batch of requests in seconds.  (Prefill-Decode disaggregated)",
+      "expr": "avg(sglang:avg_request_queue_latency{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"})"
+    },
+    {
+      "title": "[Decode] Token Usage (By DP Rank)",
+      "description": "indicates the KV cache memory utilization of the server.  (Prefill-Decode disaggregated)",
+      "expr": "max(sglang:token_usage{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"}) by (region,pod,dp_rank)"
+    },
+    {
+      "title": "[Decode] Running Req Num (By DP Rank)",
+      "description": "indicates the KV cache memory utilization of the server.  (Prefill-Decode disaggregated)",
+      "expr": "max(sglang:num_running_reqs{region=~\"$region\",job=~\"$namespace/$app-decode\",cluster=\"\"}) by (region,pod,dp_rank)"
+    }
+  ],
+  "PD Network": [
+    {
+      "title": "Total Pod Bandwidth",
+      "description": "Total RX + TX bandwidth for all Decode and Prefill pods",
+      "expr": "sum(     rate(container_network_receive_bytes_total{         namespace=\"$namespace\",         pod=~\"$app-(decode|prefill).*\"     }[5m]) +     rate(container_network_transmit_bytes_total{         namespace=\"$namespace\",         pod=~\"$app-(decode|prefill).*\"     }[5m]) )"
+    },
+    {
+      "title": "Pod Network Receive Rate",
+      "description": "",
+      "expr": "sum(     rate(container_network_receive_bytes_total{         namespace=\"$namespace\",         pod=~\"$app-(decode|prefill).*\"     }[5m]) )"
+    },
+    {
+      "title": "Pod Network Transmit Rate",
+      "description": "",
+      "expr": "sum(     rate(container_network_transmit_bytes_total{         namespace=\"$namespace\",         pod=~\"$app-(decode|prefill).*\"     }[5m]) )"
+    },
+    {
+      "title": "Pod RX/TX Ratio",
+      "description": "",
+      "expr": "sum(rate(container_network_receive_bytes_total{namespace=\"$namespace\",pod=~\"$app-(decode|prefill).*\"}[5m])) / sum(rate(container_network_transmit_bytes_total{namespace=\"$namespace\",pod=~\"$app-(decode|prefill).*\"}[5m]))"
+    },
+    {
+      "title": "Decode Pods RX Rate per Instance",
+      "description": "Individual RX rate for each Decode pod",
+      "expr": "sum by (pod) (     rate(container_network_receive_bytes_total{         namespace=\"$namespace\",         pod=~\"$app-decode.*\"     }[5m]) )"
+    },
+    {
+      "title": "Decode Pods TX Rate per Instance",
+      "description": "",
+      "expr": "sum by (pod) (     rate(container_network_transmit_bytes_total{         namespace=\"$namespace\",         pod=~\"$app-decode.*\"     }[5m]) )"
+    },
+    {
+      "title": "Prefill Pods RX Rate per Instance",
+      "description": "",
+      "expr": "sum by (pod) (     rate(container_network_receive_bytes_total{         namespace=\"$namespace\",         pod=~\"$app-prefill.*\"     }[5m]) )"
+    },
+    {
+      "title": "Prefill Pods TX Rate per Instance",
+      "description": "",
+      "expr": "sum by (pod) (     rate(container_network_transmit_bytes_total{         namespace=\"$namespace\",         pod=~\"$app-prefill.*\"     }[5m]) )"
+    },
+    {
+      "title": "Decode Pods RX - Max/Avg/Mean",
+      "description": "",
+      "expr": "max(     sum by (pod) (         rate(container_network_receive_bytes_total{             namespace=\"$namespace\",             pod=~\"$app-decode.*\"         }[5m])     ) )"
+    },
+    {
+      "title": "Decode Pods TX - Max/Avg/Mean",
+      "description": "",
+      "expr": "max(     sum by (pod) (         rate(container_network_transmit_bytes_total{             namespace=\"$namespace\",             pod=~\"$app-decode.*\"         }[5m])     ) )"
+    },
+    {
+      "title": "Prefill Pods RX - Max/Avg/Mean",
+      "description": "",
+      "expr": "max(     sum by (pod) (         rate(container_network_receive_bytes_total{             namespace=\"$namespace\",             pod=~\"$app-prefill.*\"         }[5m])     ) )"
+    },
+    {
+      "title": "Prefill Pods TX - Max/Avg/Mean",
+      "description": "",
+      "expr": "max(     sum by (pod) (         rate(container_network_transmit_bytes_total{             namespace=\"$namespace\",             pod=~\"$app-prefill.*\"         }[5m])     ) )"
+    },
+    {
+      "title": "IB RX（Decode Scoped)",
+      "description": "",
+      "expr": "sum by (instance, node) (   rate(node_infiniband_port_data_received_bytes_total[1m]) ) * on (node) group_left() (   count by (node) (     kube_pod_info{       namespace=\"$namespace\",       pod=~\"$app-decode.*\"     }   ) > 0 )"
+    },
+    {
+      "title": "IB TX（Decode Scoped)",
+      "description": "",
+      "expr": "sum by (instance, node) (   rate(node_infiniband_port_data_transmitted_bytes_total[1m]) ) * on (node) group_left() (   count by (node) (     kube_pod_info{       namespace=\"$namespace\",       pod=~\"$app-decode.*\"     }   ) > 0 )"
+    },
+    {
+      "title": "IB RX（Prefill Scoped)",
+      "description": "",
+      "expr": "sum by (instance, node) (   rate(node_infiniband_port_data_received_bytes_total[1m]) ) * on (node) group_left() (   count by (node) (     kube_pod_info{       namespace=\"$namespace\",       pod=~\"$app-prefill.*\"     }   ) > 0 )"
+    },
+    {
+      "title": "IB TX（Prefill Scoped)",
+      "description": "",
+      "expr": "sum by (instance, node) (   rate(node_infiniband_port_data_transmitted_bytes_total[1m]) ) * on (node) group_left() (   count by (node) (     kube_pod_info{       namespace=\"$namespace\",       pod=~\"$app-prefill.*\"     }   ) > 0 )"
+    },
+    {
+      "title": "IB RX/TX Ratio",
+      "description": "",
+      "expr": "(   sum by(instance, node) (     rate(node_infiniband_port_data_received_bytes_total[1m])   )   *   on(node)   group_left()   (     count by(node) (       kube_pod_info{         namespace=\"$namespace\",         pod=~\"$app-(decode|prefill).*\"       }     ) > 0   ) ) / (   sum by(instance, node) (     rate(node_infiniband_port_data_transmitted_bytes_total[1m])   )   *   on(node)   group_left()   (     count by(node) (       kube_pod_info{         namespace=\"$namespace\",         pod=~\"$app-(decode|prefill).*\"       }     ) > 0   ) )"
+    },
+    {
+      "title": "InfiniBand Network Transmit Wait",
+      "description": "",
+      "expr": "max by (instance, node) (   rate(node_infiniband_port_transmit_wait_total[1m]) ) * on (node) group_left() (   count by (node) (     kube_pod_info{       namespace=\"$namespace\",       pod=~\"$app-decode.*\"     }   ) > 0 )"
+    }
+  ]
+}
