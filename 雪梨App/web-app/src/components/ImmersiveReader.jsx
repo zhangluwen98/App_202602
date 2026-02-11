@@ -192,24 +192,35 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
         const character = getCharacterBySpeaker(part.speaker);
         
         return (
-          <div key={`${paragraphId}-dialogue-${index}`} className={`w-full flex ${isLeft ? 'justify-start' : 'justify-end'} my-2`}>
+          <div key={`${paragraphId}-dialogue-${index}`} className="w-full flex items-start my-3 honor-flex-fix" style={{ display: 'flex', flexDirection: isLeft ? 'row' : 'row-reverse', alignItems: 'flex-start', justifyContent: isLeft ? 'flex-start' : 'flex-end' }}>
             <motion.div 
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, delay: index * 0.04 }}
-              className={`flex items-end gap-2 max-w-[70%] ${isLeft ? '' : 'flex-row-reverse'}`}
+              className={`flex items-start gap-2.5 honor-flex-fix ${isLeft ? '' : 'flex-row-reverse'}`}
+              style={{ display: 'flex', flexDirection: isLeft ? 'row' : 'row-reverse', alignItems: 'flex-start', maxWidth: isMobileMode ? '85%' : '75%' }}
             >
               {isLeft && character && (
-                <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 shadow-md">
-                  <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                <div 
+                  className="rounded-full overflow-hidden flex-shrink-0 shadow-sm border border-gray-100 honor-avatar-fix"
+                  style={{ width: isMobileMode ? '36px' : '44px', height: isMobileMode ? '36px' : '44px', minWidth: isMobileMode ? '36px' : '44px', flexShrink: 0 }}
+                >
+                  <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover honor-avatar-fix" style={{ width: '100%', height: '100%', display: 'block' }} />
                 </div>
               )}
-              <div className={`px-4 py-2.5 shadow-sm text-sm leading-6 ${
-                isProtagonist 
-                  ? 'bg-sherry-500 text-white rounded-2xl rounded-br-sm' 
-                  : 'bg-white text-gray-700 rounded-2xl rounded-bl-sm border border-gray-100'
-              }`}>
-                {part.text}
+              <div className="flex flex-col gap-1 honor-flex-fix" style={{ display: 'flex', flexDirection: 'column', alignItems: isLeft ? 'flex-start' : 'flex-end' }}>
+                {isLeft && character && (
+                  <span className="text-[10px] text-gray-400 font-medium ml-1 mb-0.5">{character.name}</span>
+                )}
+                <div className={`
+                  px-4 py-2.5 shadow-sm text-sm leading-6 word-break-all
+                  ${isProtagonist 
+                    ? 'bg-sherry-500 text-white rounded-2xl rounded-tr-none' 
+                    : 'bg-white text-gray-700 rounded-2xl rounded-tl-none border border-gray-100'
+                  }
+                `} style={{ wordBreak: 'break-word' }}>
+                  {part.text}
+                </div>
               </div>
             </motion.div>
           </div>
@@ -576,27 +587,28 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
 
             {/* Character Message (Bubble) */}
             {msg.sender === 'character' && (
-              <div className="w-full flex flex-row justify-start my-3 px-2">
+              <div className="w-full flex flex-row justify-start my-3 px-2 honor-flex-fix" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                 <motion.div 
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, ease: "easeOut" }}
-                  className={`flex flex-row items-start ${isMobileMode ? 'max-w-[85%]' : 'max-w-[75%]'}`}
+                  className={`flex flex-row items-start honor-flex-fix ${isMobileMode ? 'max-w-[85%]' : 'max-w-[75%]'}`}
+                  style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start' }}
                 >
                   {/* Avatar Container - Fixed Size */}
                   <div 
-                    style={{ width: isMobileMode ? '40px' : '48px', height: isMobileMode ? '40px' : '48px', marginRight: '10px' }}
-                    className="rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-white"
+                    style={{ width: isMobileMode ? '40px' : '48px', height: isMobileMode ? '40px' : '48px', minWidth: isMobileMode ? '40px' : '48px', marginRight: '10px' }}
+                    className="rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-white honor-avatar-fix"
                   >
-                    <img src={(activeCharacter || character).avatar} alt="Avatar" className="w-full h-full object-cover" />
+                    <img src={(activeCharacter || character).avatar} alt="Avatar" className="w-full h-full object-cover honor-avatar-fix" style={{ width: '100%', height: '100%', display: 'block' }} />
                   </div>
                   
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-gray-400 font-medium ml-1 mb-1">{character.name}</span>
+                  <div className="flex flex-col honor-flex-fix" style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span className="text-[10px] text-gray-400 font-medium ml-1 mb-1">{(activeCharacter || character).name}</span>
                     <div className={`
-                      bg-white text-gray-800 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm
+                      bg-white text-gray-800 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm word-break-all
                       ${isMobileMode ? 'px-4 py-2.5 text-sm leading-6' : 'px-5 py-3 text-base leading-7'}
-                    `}>
+                    `} style={{ wordBreak: 'break-word' }}>
                       {msg.text}
                     </div>
                   </div>
@@ -606,18 +618,19 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
 
             {/* User Message (Bubble) */}
             {msg.sender === 'user' && (
-              <div className="w-full flex justify-end my-3 px-2">
+              <div className="w-full flex justify-end my-3 px-2 honor-flex-fix" style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <motion.div 
                   initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, ease: "easeOut" }}
-                  className={`flex flex-col items-end gap-1 ${isMobileMode ? 'max-w-[80%]' : 'max-w-[70%]'}`}
+                  className={`flex flex-col items-end gap-1 honor-flex-fix ${isMobileMode ? 'max-w-[85%]' : 'max-w-[75%]'}`}
+                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}
                 >
                   <span className="text-[10px] text-gray-400 font-medium mr-1">我</span>
                   <div className={`
-                    bg-gradient-to-br from-sherry-500 to-sherry-600 text-white rounded-2xl rounded-tr-none shadow-md
+                    bg-gradient-to-br from-sherry-500 to-sherry-600 text-white rounded-2xl rounded-tr-none shadow-md word-break-all
                     ${isMobileMode ? 'px-4 py-2.5 text-sm leading-6' : 'px-5 py-3 text-base leading-7'}
-                  `}>
+                  `} style={{ wordBreak: 'break-word' }}>
                     {msg.text}
                   </div>
                 </motion.div>
@@ -633,108 +646,113 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="w-full my-3"
+              className="w-full my-4 px-2"
             >
               {chapter.ending.type === 'finished' ? (
-                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-gray-100">
-                  <div className="text-center mb-3">
+                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-gray-100 honor-flex-fix" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div className="text-center mb-4 honor-flex-fix" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                      className="w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg"
+                      className="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg honor-flex-fix"
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                      <CheckCircle size={24} className="text-white" />
+                      <CheckCircle size={28} className="text-white" />
                     </motion.div>
-                    <h3 className="font-bold text-gray-800 text-base mb-0.5">故事完结</h3>
-                    <p className="text-xs text-gray-500">感谢您的陪伴</p>
+                    <h3 className="font-bold text-gray-800 text-lg mb-1">故事完结</h3>
+                    <p className="text-xs text-gray-500 font-medium">感谢您的陪伴</p>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-3 mb-3">
-                    <p className="text-sm text-gray-700 text-center leading-relaxed">
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-4 mb-4">
+                    <p className="text-sm text-gray-700 text-center leading-relaxed font-medium word-break-all">
                       {chapter.ending.text}
                     </p>
                   </div>
                   
-                  <div className="flex gap-2">
+                  <div className="flex gap-3 honor-flex-fix" style={{ display: 'flex', flexDirection: 'row' }}>
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setShowChapterEnding(false)}
-                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-2 rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-1.5 text-sm"
+                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 text-sm border-none outline-none honor-flex-fix"
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                      <Heart size={14} />
+                      <Heart size={16} />
                       <span>收藏作品</span>
                     </motion.button>
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={onBack}
-                      className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-xl font-medium hover:bg-gray-200 transition-all duration-200 text-sm"
+                      className="flex-1 bg-gray-100 text-gray-700 px-4 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all duration-200 text-sm border-none outline-none"
                     >
                       返回首页
                     </motion.button>
                   </div>
                 </div>
               ) : chapter.ending.type === 'complete' ? (
-                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-gray-100">
-                  <div className="text-center mb-3">
+                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-gray-100 honor-flex-fix" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div className="text-center mb-4 honor-flex-fix" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                      className="w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br from-sherry-400 to-orange-400 flex items-center justify-center shadow-lg"
+                      className="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-sherry-400 to-orange-400 flex items-center justify-center shadow-lg honor-flex-fix"
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                      <Sparkles size={24} className="text-white" />
+                      <Sparkles size={28} className="text-white" />
                     </motion.div>
-                    <h3 className="font-bold text-gray-800 text-base mb-0.5">连载中</h3>
-                    <p className="text-xs text-gray-500">精彩内容持续更新中</p>
+                    <h3 className="font-bold text-gray-800 text-lg mb-1">连载中</h3>
+                    <p className="text-xs text-gray-500 font-medium">精彩内容持续更新中</p>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-sherry-50 to-orange-50 rounded-xl p-3 mb-3">
-                    <p className="text-sm text-gray-700 text-center leading-relaxed">
+                  <div className="bg-gradient-to-r from-sherry-50 to-orange-50 rounded-2xl p-4 mb-4">
+                    <p className="text-sm text-gray-700 text-center leading-relaxed font-medium word-break-all">
                       感谢您的阅读！<br />
                       打赏可以催更，支持作者继续创作
                     </p>
                   </div>
                   
-                  <div className="flex gap-2">
+                  <div className="flex gap-3 honor-flex-fix" style={{ display: 'flex', flexDirection: 'row' }}>
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="flex-1 bg-gradient-to-r from-sherry-500 to-orange-500 text-white px-3 py-2 rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-1.5 text-sm"
+                      className="flex-1 bg-gradient-to-r from-sherry-500 to-orange-500 text-white px-4 py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 text-sm border-none outline-none honor-flex-fix"
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                      <Gift size={14} />
+                      <Gift size={16} />
                       <span>打赏催更</span>
                     </motion.button>
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={onBack}
-                      className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-xl font-medium hover:bg-gray-200 transition-all duration-200 text-sm"
+                      className="flex-1 bg-gray-100 text-gray-700 px-4 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all duration-200 text-sm border-none outline-none"
                     >
                       返回首页
                     </motion.button>
                   </div>
                 </div>
               ) : (
-                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-3 sm:p-4 shadow-lg border border-gray-100">
-                  <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                    <Sparkles size={16} className="text-sherry-500" />
-                    <h3 className="font-bold text-gray-800 text-sm sm:text-base">剧情选择</h3>
+                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-5 shadow-xl border border-gray-100 honor-flex-fix" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div className="flex items-center gap-2 mb-3 sm:mb-4 honor-flex-fix" style={{ display: 'flex', alignItems: 'center' }}>
+                    <Sparkles size={20} className="text-sherry-500" />
+                    <h3 className="font-bold text-gray-800 text-base sm:text-lg">剧情选择</h3>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">{chapter.ending.text}</p>
-                  <div className="space-y-2">
+                  <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-5 leading-relaxed font-medium word-break-all">{chapter.ending.text}</p>
+                  <div className="space-y-2.5 honor-flex-fix" style={{ display: 'flex', flexDirection: 'column' }}>
                     {chapter.ending.options.map((option) => (
                       <motion.button
                         key={option.id}
                         onClick={() => handleChapterChoice(option)}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full text-left px-3 py-2.5 sm:px-4 sm:py-3 bg-gradient-to-r from-sherry-50 to-orange-50 hover:from-sherry-100 hover:to-orange-100 rounded-xl border border-sherry-200 transition-all duration-200 flex items-center justify-between group"
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        className="w-full text-left px-4 py-3.5 sm:px-5 sm:py-4 bg-gradient-to-r from-sherry-50 to-orange-50 hover:from-sherry-100 hover:to-orange-100 rounded-2xl border border-sherry-200 transition-all duration-200 flex items-center justify-between group outline-none honor-flex-fix"
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
                       >
-                        <span className="text-xs sm:text-sm font-medium text-gray-700">{option.text}</span>
-                        <ChevronRight size={14} className="text-sherry-400 group-hover:translate-x-1 transition-transform" />
+                        <span className="text-xs sm:text-sm font-bold text-gray-700">{option.text}</span>
+                        <ChevronRight size={16} className="text-sherry-400 group-hover:translate-x-1 transition-transform" />
                       </motion.button>
                     ))}
                   </div>
@@ -745,21 +763,22 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
         </AnimatePresence>
         
         {isTyping && (
-          <div className="w-full flex justify-start my-3 px-2">
+          <div className="w-full flex justify-start my-3 px-2 honor-flex-fix" style={{ display: 'flex', justifyContent: 'flex-start' }}>
             <motion.div 
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className={`flex items-start gap-2.5 ${isMobileMode ? 'max-w-[70%]' : 'max-w-[50%]'}`}
+              className={`flex items-start gap-2.5 honor-flex-fix ${isMobileMode ? 'max-w-[85%]' : 'max-w-[75%]'}`}
+              style={{ display: 'flex', alignItems: 'flex-start' }}
             >
               <div 
-                style={{ width: isMobileMode ? '40px' : '48px', height: isMobileMode ? '40px' : '48px' }}
-                className="rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-white"
+                className="rounded-full overflow-hidden flex-shrink-0 shadow-sm border border-gray-100 honor-avatar-fix"
+                style={{ width: isMobileMode ? '36px' : '44px', height: isMobileMode ? '36px' : '44px', minWidth: isMobileMode ? '36px' : '44px' }}
               >
-                <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                <img src={(activeCharacter || character).avatar} alt="Avatar" className="w-full h-full object-cover honor-avatar-fix" style={{ width: '100%', height: '100%', display: 'block' }} />
               </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] text-gray-400 font-medium ml-1">{character.name}</span>
-                <div className={`bg-white rounded-2xl rounded-tl-none border border-gray-100 shadow-sm flex gap-1.5 ${isMobileMode ? 'px-4 py-3' : 'px-5 py-4'}`}>
+              <div className="flex flex-col gap-1 honor-flex-fix" style={{ display: 'flex', flexDirection: 'column' }}>
+                <span className="text-[10px] text-gray-400 font-medium ml-1 mb-0.5">{(activeCharacter || character).name}</span>
+                <div className={`bg-white rounded-2xl rounded-tl-none border border-gray-100 shadow-sm flex gap-1.5 honor-flex-fix ${isMobileMode ? 'px-4 py-3' : 'px-5 py-4'}`} style={{ display: 'flex' }}>
                   <span className="w-1.5 h-1.5 bg-sherry-300 rounded-full animate-bounce"></span>
                   <span className="w-1.5 h-1.5 bg-sherry-400 rounded-full animate-bounce delay-75"></span>
                   <span className="w-1.5 h-1.5 bg-sherry-500 rounded-full animate-bounce delay-150"></span>
@@ -773,32 +792,32 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
 
       {/* Character Info Bar */}
       <div className={`
-        ${isMobileMode ? 'px-4 py-2' : 'px-8 py-3'} 
-        border-t flex items-center justify-between transition-colors z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]
+        ${isMobileMode ? 'px-4 py-3' : 'px-8 py-4'} 
+        border-t flex items-center justify-between transition-colors z-20 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] honor-flex-fix
         ${isAuthorMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}
-      `}>
-        <div className="flex items-center gap-3">
+      `} style={{ display: 'flex', alignItems: 'center', justifyContent: 'between' }}>
+        <div className="flex items-center gap-3 honor-flex-fix" style={{ display: 'flex', alignItems: 'center' }}>
           <div className="relative group cursor-pointer flex-shrink-0">
             <div 
-              style={{ width: isMobileMode ? '40px' : '48px', height: isMobileMode ? '40px' : '48px' }}
-              className="rounded-full overflow-hidden border-2 border-white shadow-md group-hover:scale-105 transition-transform"
+              style={{ width: isMobileMode ? '40px' : '48px', height: isMobileMode ? '40px' : '48px', minWidth: isMobileMode ? '40px' : '48px' }}
+              className="rounded-full overflow-hidden border-2 border-white shadow-md group-hover:scale-105 transition-transform honor-avatar-fix"
             >
-              <img src={(activeCharacter || character).avatar} alt={(activeCharacter || character).name} className="w-full h-full object-cover" />
+              <img src={(activeCharacter || character).avatar} alt={(activeCharacter || character).name} className="w-full h-full object-cover honor-avatar-fix" style={{ width: '100%', height: '100%', display: 'block' }} />
             </div>
             <div className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
           </div>
           <div className="min-w-0">
-            <h3 className={`font-bold ${isMobileMode ? 'text-sm' : 'text-base'} ${isAuthorMode ? 'text-white' : 'text-gray-800'}`}>
+            <h3 className={`font-black ${isMobileMode ? 'text-sm' : 'text-base'} ${isAuthorMode ? 'text-white' : 'text-gray-900'} truncate`}>
               {(activeCharacter || character).name}
             </h3>
-            <div className="flex items-center gap-1.5 mt-0.5">
+            <div className="flex items-center gap-1.5 mt-0.5 honor-flex-fix" style={{ display: 'flex', alignItems: 'center' }}>
               {isAuthorMode ? (
-                <span className={`${isMobileMode ? 'text-[10px]' : 'text-xs'} text-purple-400 font-bold flex items-center gap-1 bg-purple-900/20 px-1.5 py-0.5 rounded`}>
+                <span className={`${isMobileMode ? 'text-[10px]' : 'text-xs'} text-purple-400 font-bold flex items-center gap-1 bg-purple-900/20 px-1.5 py-0.5 rounded honor-flex-fix`} style={{ display: 'flex', alignItems: 'center' }}>
                   <Wand2 size={isMobileMode ? 10 : 12} /> 作者模式
                 </span>
               ) : (
-                <div className="flex items-center gap-1.5">
-                  <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-1.5 honor-flex-fix" style={{ display: 'flex', alignItems: 'center' }}>
+                  <div className="flex items-center gap-0.5 honor-flex-fix" style={{ display: 'flex', alignItems: 'center' }}>
                     {[1, 2, 3].map(i => (
                       <HeartIcon key={i} filled={i <= 2} />
                     ))}
@@ -812,15 +831,16 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 honor-flex-fix" style={{ display: 'flex', alignItems: 'center' }}>
           <button 
             onClick={() => setIsAuthorMode(!isAuthorMode)}
             className={`
-              flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all text-xs font-bold
+              flex items-center gap-1.5 px-4 py-2 rounded-full transition-all text-xs font-bold border-none outline-none honor-flex-fix
               ${isAuthorMode 
                 ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/30' 
                 : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}
             `}
+            style={{ display: 'flex', alignItems: 'center' }}
           >
             <Wand2 size={14} />
             {!isMobileMode && <span>{isAuthorMode ? '退出创作' : '开始创作'}</span>}
@@ -830,21 +850,21 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
 
       {/* Input Area */}
       <div className={`
-        ${isMobileMode ? 'px-4 py-3 pb-6' : 'px-8 py-4'} 
-        border-t flex flex-row items-center transition-colors z-20 min-h-[64px]
+        ${isMobileMode ? 'px-4 py-3 pb-8 safe-pb' : 'px-8 py-4'} 
+        border-t flex flex-row items-center transition-colors z-20 min-h-[72px] honor-flex-fix
         ${isAuthorMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}
-      `}>
+      `} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         {!isAuthorMode && (
-          <button className="p-2 flex-shrink-0 text-gray-400 hover:text-gray-600" style={{ marginRight: '8px' }}>
-            <Mic size={isMobileMode ? 20 : 24} />
+          <button className="p-2.5 flex-shrink-0 text-gray-400 hover:text-gray-600 border-none outline-none bg-transparent" style={{ marginRight: '4px' }}>
+            <Mic size={isMobileMode ? 22 : 26} />
           </button>
         )}
         
         <div className={`
-          flex-1 rounded-2xl ${isMobileMode ? 'px-4 py-2' : 'px-6 py-3'} 
-          flex flex-row items-center transition-all
+          flex-1 rounded-2xl ${isMobileMode ? 'px-4 py-2.5' : 'px-6 py-3.5'} 
+          flex flex-row items-center transition-all shadow-inner honor-flex-fix
           ${isAuthorMode ? 'bg-gray-800' : 'bg-gray-100'}
-        `}>
+        `} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <input
             type="text"
             placeholder={isAuthorMode ? "续写剧情或添加旁白..." : "输入你想说的话..."}
@@ -852,9 +872,9 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
               flex-1 bg-transparent border-none outline-none appearance-none
               ${isMobileMode ? 'text-sm' : 'text-base'} 
               ${isAuthorMode ? 'text-white' : 'text-gray-700'}
-              py-1
+              font-medium py-1
             `}
-            style={{ WebkitAppearance: 'none', boxShadow: 'none' }}
+            style={{ WebkitAppearance: 'none', boxShadow: 'none', border: 'none', outline: 'none', width: '100%' }}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -862,8 +882,8 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
         </div>
 
         {!isAuthorMode && (
-          <button className="p-2 flex-shrink-0 text-gray-400 hover:text-gray-600" style={{ marginLeft: '8px', marginRight: '8px' }}>
-            <Gift size={isMobileMode ? 20 : 24} />
+          <button className="p-2.5 flex-shrink-0 text-gray-400 hover:text-gray-600 border-none outline-none bg-transparent" style={{ marginLeft: '4px', marginRight: '4px' }}>
+            <Gift size={isMobileMode ? 22 : 26} />
           </button>
         )}
         
@@ -871,16 +891,16 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
           onClick={handleSend}
           disabled={!inputValue.trim()}
           className={`
-            p-3 rounded-2xl transition-all flex-shrink-0
+            p-3.5 rounded-2xl transition-all flex-shrink-0 border-none outline-none honor-flex-fix
             ${inputValue.trim() 
               ? (isAuthorMode 
-                  ? 'bg-purple-600 text-white shadow-lg' 
-                  : 'bg-sherry-500 text-white shadow-lg') 
+                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' 
+                  : 'bg-sherry-500 text-white shadow-lg shadow-sherry-200') 
               : 'bg-gray-200 text-gray-400'}
           `}
-          style={{ marginLeft: isAuthorMode ? '8px' : '0' }}
+          style={{ marginLeft: isAuthorMode ? '10px' : '0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
-          <Send size={isMobileMode ? 18 : 20} />
+          <Send size={isMobileMode ? 20 : 22} />
         </button>
       </div>
 

@@ -44,6 +44,29 @@ body {
 .fixed { position: fixed !important; }
 .sticky { position: sticky !important; }
 
+/* 针对荣耀/华为浏览器的增强兼容性 */
+.honor-flex-fix {
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: flex !important;
+}
+
+.honor-avatar-fix {
+  -webkit-flex-shrink: 0 !important;
+  flex-shrink: 0 !important;
+  object-fit: cover !important;
+}
+
+.safe-pb {
+  padding-bottom: constant(safe-area-inset-bottom) !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
+}
+
+.word-break-all {
+  word-break: break-all !important;
+  word-wrap: break-word !important;
+}
+
 @theme {
   --color-sherry-50: #FFF3E0;
   --color-sherry-100: #FFE0B2;
