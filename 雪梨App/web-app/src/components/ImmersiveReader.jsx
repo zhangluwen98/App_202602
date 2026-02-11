@@ -453,31 +453,31 @@ export default function ImmersiveReader({ storyId, onBack }) {
   return (
     <div className="h-full flex flex-col bg-gradient-to-br from-[#FAF9F6] to-[#F5F3EF] font-sans">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex justify-between items-center shadow-sm z-20">
-        <div className="flex items-center gap-3">
-          <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <ArrowLeft size={18} className="text-gray-600" />
+      <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 px-3 py-2 flex justify-between items-center shadow-sm z-20">
+        <div className="flex items-center gap-2">
+          <button onClick={onBack} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors">
+            <ArrowLeft size={16} className="text-gray-600" />
           </button>
-          <button onClick={() => setShowChapterDirectory(true)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <BookOpen size={18} className="text-gray-600" />
+          <button onClick={() => setShowChapterDirectory(true)} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors">
+            <BookOpen size={16} className="text-gray-600" />
           </button>
           <div className="min-w-0">
-            <h2 className="text-sm font-semibold text-gray-800 line-clamp-1">{story.title}</h2>
-            <p className="text-xs text-gray-400">{chapter.title}</p>
+            <h2 className="text-xs font-semibold text-gray-800 line-clamp-1">{story.title}</h2>
+            <p className="text-[10px] text-gray-400">{chapter.title}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="p-2 hover:bg-gray-100 rounded-full text-gray-400">
-            <Settings size={16} />
+        <div className="flex items-center gap-1">
+          <button className="p-1.5 hover:bg-gray-100 rounded-full text-gray-400">
+            <Settings size={14} />
           </button>
-          <button className="p-2 hover:bg-gray-100 rounded-full text-gray-400">
-            <Share2 size={16} />
+          <button className="p-1.5 hover:bg-gray-100 rounded-full text-gray-400">
+            <Share2 size={14} />
           </button>
         </div>
       </div>
 
       {/* Chat Area */}
-      <div className={`flex-1 overflow-y-auto px-3 sm:px-4 py-3 sm:py-4 space-y-2 ${isAuthorMode ? 'bg-gray-900' : 'bg-transparent'}`}>
+      <div className={`flex-1 overflow-y-auto px-3 py-3 space-y-2 ${isAuthorMode ? 'bg-gray-900' : 'bg-transparent'}`}>
         {messages.map((msg) => (
           <motion.div
             key={msg.id}
@@ -581,12 +581,12 @@ export default function ImmersiveReader({ storyId, onBack }) {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.25 }}
-                  className="flex items-end gap-2 max-w-[70%]"
+                  className="flex items-end gap-2 max-w-[75%]"
                 >
-                  <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 shadow-md">
+                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 shadow-md">
                     <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover" />
                   </div>
-                  <div className="bg-white text-gray-700 px-4 py-2.5 rounded-2xl rounded-bl-sm border border-gray-100 shadow-sm text-sm leading-6">
+                  <div className="bg-white text-gray-700 px-3 py-2 rounded-2xl rounded-bl-sm border border-gray-100 shadow-sm text-xs leading-5">
                     {msg.text}
                   </div>
                 </motion.div>
@@ -600,9 +600,9 @@ export default function ImmersiveReader({ storyId, onBack }) {
                   initial={{ opacity: 0, x: 8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.25 }}
-                  className="flex items-end gap-2 max-w-[70%]"
+                  className="flex items-end gap-2 max-w-[75%]"
                 >
-                  <div className="bg-sherry-500 text-white px-4 py-2.5 rounded-2xl rounded-br-sm shadow-md text-sm leading-6">
+                  <div className="bg-sherry-500 text-white px-3 py-2 rounded-2xl rounded-br-sm shadow-md text-xs leading-5">
                     {msg.text}
                   </div>
                 </motion.div>
@@ -752,25 +752,25 @@ export default function ImmersiveReader({ storyId, onBack }) {
       </div>
 
       {/* Character Info Bar */}
-      <div className={`px-4 py-2 border-t flex items-center justify-between transition-colors ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
-        <div className="flex items-center gap-2.5">
+      <div className={`px-3 py-1.5 border-t flex items-center justify-between transition-colors ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+        <div className="flex items-center gap-2">
           <div className="relative">
-            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-md">
+            <div className="w-7 h-7 rounded-full overflow-hidden border-2 border-white shadow-md">
               <img src={(activeCharacter || character).avatar} alt={(activeCharacter || character).name} className="w-full h-full object-cover" />
             </div>
-            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></div>
+            <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 border-2 border-white rounded-full"></div>
           </div>
           <div className="min-w-0">
-            <h3 className={`font-bold text-sm ${isAuthorMode ? 'text-white' : 'text-gray-800'}`}>{(activeCharacter || character).name}</h3>
-            <div className="flex items-center gap-1">
+            <h3 className={`font-bold text-xs ${isAuthorMode ? 'text-white' : 'text-gray-800'}`}>{(activeCharacter || character).name}</h3>
+            <div className="flex items-center gap-0.5">
               {isAuthorMode ? (
-                <span className="text-xs text-purple-400 font-medium flex items-center gap-1">
-                  <Wand2 size={10} /> 作者模式
+                <span className="text-[10px] text-purple-400 font-medium flex items-center gap-0.5">
+                  <Wand2 size={8} /> 作者模式
                 </span>
               ) : (
                 <>
                   <HeartIcon filled />
-                  <span className="text-xs text-sherry-500 font-medium">
+                  <span className="text-[10px] text-sherry-500 font-medium">
                     {characterIntimacy[(activeCharacter || character).id]?.currentStatus || '初次相遇'}
                   </span>
                 </>
@@ -781,24 +781,24 @@ export default function ImmersiveReader({ storyId, onBack }) {
         
         <button 
           onClick={() => setIsAuthorMode(!isAuthorMode)}
-          className={`p-1.5 rounded-full transition-colors ${isAuthorMode ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-400 hover:text-purple-600'}`}
+          className={`p-1 rounded-full transition-colors ${isAuthorMode ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-400 hover:text-purple-600'}`}
         >
-          <Wand2 size={14} />
+          <Wand2 size={12} />
         </button>
       </div>
 
       {/* Input Area */}
-      <div className={`px-4 py-2.5 border-t flex items-center gap-2.5 transition-colors ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+      <div className={`px-3 py-2 border-t flex items-center gap-2 transition-colors ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
         {!isAuthorMode && (
           <button className="text-gray-400 hover:text-gray-600">
-            <Mic size={18} />
+            <Mic size={16} />
           </button>
         )}
-        <div className={`flex-1 rounded-full px-4 py-2 flex items-center ${isAuthorMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+        <div className={`flex-1 rounded-full px-3 py-1.5 flex items-center ${isAuthorMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
           <input
             type="text"
             placeholder={isAuthorMode ? "输入剧情旁白..." : "和TA说点什么..."}
-            className={`flex-1 bg-transparent border-none outline-none text-sm placeholder-gray-400 ${isAuthorMode ? 'text-white' : 'text-gray-700'}`}
+            className={`flex-1 bg-transparent border-none outline-none text-xs placeholder-gray-400 ${isAuthorMode ? 'text-white' : 'text-gray-700'}`}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -806,19 +806,19 @@ export default function ImmersiveReader({ storyId, onBack }) {
         </div>
         {!isAuthorMode && (
           <button className="text-gray-400 hover:text-gray-600">
-            <Gift size={18} />
+            <Gift size={16} />
           </button>
         )}
         <button 
           onClick={handleSend}
           disabled={!inputValue.trim()}
-          className={`p-2 rounded-full transition-colors ${
+          className={`p-1.5 rounded-full transition-colors ${
             inputValue.trim() 
               ? (isAuthorMode ? 'bg-purple-600 text-white' : 'bg-sherry-500 text-white shadow-md') 
               : (isAuthorMode ? 'bg-gray-600 text-gray-400' : 'bg-gray-200 text-white')
           }`}
         >
-          <Send size={16} />
+          <Send size={14} />
         </button>
       </div>
 
@@ -829,24 +829,24 @@ export default function ImmersiveReader({ storyId, onBack }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-3"
             onClick={() => setShowChapterDirectory(false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl w-full max-w-md max-h-[70vh] overflow-hidden shadow-2xl"
+              className="bg-white rounded-2xl w-full max-w-md max-h-[75vh] overflow-hidden shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h3 className="font-bold text-gray-800 text-lg">章节目录</h3>
+              <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                <h3 className="font-bold text-gray-800 text-sm">章节目录</h3>
                 <button onClick={() => setShowChapterDirectory(false)} className="p-1 hover:bg-gray-100 rounded-full">
-                  <X size={20} className="text-gray-500" />
+                  <X size={16} className="text-gray-500" />
                 </button>
               </div>
-              <div className="p-4 overflow-y-auto max-h-[60vh]">
-                <div className="space-y-2">
+              <div className="p-3 overflow-y-auto max-h-[65vh]">
+                <div className="space-y-1.5">
                   {story.chapters.map((chapter, index) => {
                     const isUnlocked = unlockedChapters.has(index);
                     const isCurrent = index === currentChapterIndex;
@@ -862,7 +862,7 @@ export default function ImmersiveReader({ storyId, onBack }) {
                         disabled={!isUnlocked}
                         whileHover={isUnlocked ? { scale: 1.01 } : {}}
                         whileTap={isUnlocked ? { scale: 0.99 } : {}}
-                        className={`w-full text-left px-4 py-3 rounded-xl transition-all ${
+                        className={`w-full text-left px-3 py-2 rounded-xl transition-all ${
                           isCurrent 
                             ? 'bg-sherry-500 text-white shadow-md' 
                             : isUnlocked 
@@ -871,16 +871,16 @@ export default function ImmersiveReader({ storyId, onBack }) {
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
                             {isUnlocked ? (
-                              <CheckCircle size={16} className={isCurrent ? 'text-white' : 'text-green-500'} />
+                              <CheckCircle size={14} className={isCurrent ? 'text-white' : 'text-green-500'} />
                             ) : (
-                              <ChevronRight size={16} className="text-gray-400" />
+                              <ChevronRight size={14} className="text-gray-400" />
                             )}
-                            <span className="font-medium text-sm">{chapter.title}</span>
+                            <span className="font-medium text-xs">{chapter.title}</span>
                           </div>
                           {isCurrent && (
-                            <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">当前</span>
+                            <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">当前</span>
                           )}
                         </div>
                       </motion.button>
@@ -888,14 +888,14 @@ export default function ImmersiveReader({ storyId, onBack }) {
                   })}
                 </div>
               </div>
-              <div className="px-5 py-3 border-t border-gray-100 bg-gray-50">
-                <div className="flex items-center gap-4 text-xs text-gray-500">
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle size={12} className="text-green-500" />
+              <div className="px-4 py-2 border-t border-gray-100 bg-gray-50">
+                <div className="flex items-center gap-3 text-[10px] text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <CheckCircle size={10} className="text-green-500" />
                     <span>已解锁</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <ChevronRight size={12} className="text-gray-400" />
+                  <div className="flex items-center gap-1">
+                    <ChevronRight size={10} className="text-gray-400" />
                     <span>未解锁</span>
                   </div>
                 </div>
