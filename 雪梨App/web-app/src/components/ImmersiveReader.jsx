@@ -607,11 +607,11 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
                   className={`flex items-start gap-2.5 ${isMobileMode ? 'max-w-[85%]' : 'max-w-[75%]'}`}
                 >
                   {/* Avatar Container - Fixed Size */}
-                  <div className={`
-                    ${isMobileMode ? 'w-10 h-10' : 'w-12 h-12'} 
-                    rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-white
-                  `}>
-                    <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                  <div 
+                    style={{ width: isMobileMode ? '40px' : '48px', height: isMobileMode ? '40px' : '48px' }}
+                    className="rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-white"
+                  >
+                    <img src={(activeCharacter || character).avatar} alt="Avatar" className="w-full h-full object-cover" />
                   </div>
                   
                   <div className="flex flex-col gap-1">
@@ -774,10 +774,10 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
               animate={{ opacity: 1, x: 0 }}
               className={`flex items-start gap-2.5 ${isMobileMode ? 'max-w-[70%]' : 'max-w-[50%]'}`}
             >
-              <div className={`
-                ${isMobileMode ? 'w-10 h-10' : 'w-12 h-12'} 
-                rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-white
-              `}>
+              <div 
+                style={{ width: isMobileMode ? '40px' : '48px', height: isMobileMode ? '40px' : '48px' }}
+                className="rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-white"
+              >
                 <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover" />
               </div>
               <div className="flex flex-col gap-1">
@@ -801,11 +801,11 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
         ${isAuthorMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}
       `}>
         <div className="flex items-center gap-3">
-          <div className="relative group cursor-pointer">
-            <div className={`
-              ${isMobileMode ? 'w-10 h-10' : 'w-12 h-12'} 
-              rounded-full overflow-hidden border-2 border-white shadow-md group-hover:scale-105 transition-transform
-            `}>
+          <div className="relative group cursor-pointer flex-shrink-0">
+            <div 
+              style={{ width: isMobileMode ? '40px' : '48px', height: isMobileMode ? '40px' : '48px' }}
+              className="rounded-full overflow-hidden border-2 border-white shadow-md group-hover:scale-105 transition-transform"
+            >
               <img src={(activeCharacter || character).avatar} alt={(activeCharacter || character).name} className="w-full h-full object-cover" />
             </div>
             <div className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
@@ -854,17 +854,17 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
       {/* Input Area */}
       <div className={`
         ${isMobileMode ? 'px-4 py-3 pb-6' : 'px-8 py-4'} 
-        border-t flex items-center gap-3 transition-colors z-20
+        border-t flex items-center gap-2 transition-colors z-20 min-h-[64px]
         ${isAuthorMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}
       `}>
         {!isAuthorMode && (
-          <button className={`p-2 rounded-full transition-colors ${isAuthorMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}>
+          <button className={`p-2 rounded-full flex-shrink-0 transition-colors ${isAuthorMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}>
             <Mic size={isMobileMode ? 20 : 24} />
           </button>
         )}
         
         <div className={`
-          flex-1 rounded-2xl ${isMobileMode ? 'px-4 py-2.5' : 'px-6 py-3'} 
+          flex-1 rounded-2xl ${isMobileMode ? 'px-4 py-2' : 'px-6 py-3'} 
           flex items-center transition-all focus-within:ring-2 focus-within:ring-sherry-200
           ${isAuthorMode ? 'bg-gray-800' : 'bg-gray-100'}
         `}>
@@ -875,6 +875,7 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
               flex-1 bg-transparent border-none outline-none placeholder-gray-400
               ${isMobileMode ? 'text-sm' : 'text-base'} 
               ${isAuthorMode ? 'text-white' : 'text-gray-700'}
+              py-1
             `}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
@@ -883,7 +884,7 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
         </div>
 
         {!isAuthorMode && (
-          <button className={`p-2 rounded-full transition-colors ${isAuthorMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}>
+          <button className={`p-2 rounded-full flex-shrink-0 transition-colors ${isAuthorMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}>
             <Gift size={isMobileMode ? 20 : 24} />
           </button>
         )}
@@ -892,15 +893,15 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
           onClick={handleSend}
           disabled={!inputValue.trim()}
           className={`
-            p-3 rounded-2xl transition-all
+            p-3 rounded-2xl transition-all flex-shrink-0
             ${inputValue.trim() 
               ? (isAuthorMode 
                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/30' 
                   : 'bg-sherry-500 text-white shadow-lg shadow-sherry-200') 
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'}
+              : 'bg-gray-200 text-gray-400'}
           `}
         >
-          <Send size={isMobileMode ? 18 : 22} />
+          <Send size={isMobileMode ? 18 : 20} />
         </button>
       </div>
 

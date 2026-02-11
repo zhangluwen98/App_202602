@@ -13,6 +13,29 @@
   --color-sherry-900: #E65100;
 }
 
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+    font-size: 16px; /* 强制基础字号，防止部分手机浏览器缩放 */
+  }
+
+  body {
+    background-color: #f5f5f5;
+    color: #333;
+    /* 适配刘海屏 */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    overflow-x: hidden;
+  }
+
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+}
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -21,9 +44,4 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-}
-
-body {
-  background-color: #f5f5f5;
-  color: #333;
 }
