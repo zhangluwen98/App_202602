@@ -93,18 +93,18 @@ function App() {
               <Home novels={NOVELS} onSelectStory={handleSelectStory} isMobileMode={isMobileMode || isRealMobile} />
             </div>
             
-            <div className="h-14 bg-white border-t border-gray-100 flex justify-around items-center absolute bottom-0 w-full z-10">
-              <div className="flex flex-col items-center gap-0.5 text-sherry-500 cursor-pointer">
+            <div className="h-14 bg-white border-t border-gray-100 flex flex-row justify-around items-center absolute bottom-0 w-full z-10">
+              <div className="flex flex-col items-center text-sherry-500 cursor-pointer">
                 <HomeIcon size={18} />
-                <span className="text-[9px] font-medium">首页</span>
+                <span className="text-[9px] font-medium" style={{ marginTop: '2px' }}>首页</span>
               </div>
-              <div className="flex flex-col items-center gap-0.5 text-gray-400 cursor-pointer hover:text-gray-600 transition-colors">
+              <div className="flex flex-col items-center text-gray-400 cursor-pointer hover:text-gray-600 transition-colors">
                 <Book size={18} />
-                <span className="text-[9px] font-medium">书架</span>
+                <span className="text-[9px] font-medium" style={{ marginTop: '2px' }}>书架</span>
               </div>
-              <div className="flex flex-col items-center gap-0.5 text-gray-400 cursor-pointer hover:text-gray-600 transition-colors">
+              <div className="flex flex-col items-center text-gray-400 cursor-pointer hover:text-gray-600 transition-colors">
                 <User size={18} />
-                <span className="text-[9px] font-medium">我的</span>
+                <span className="text-[9px] font-medium" style={{ marginTop: '2px' }}>我的</span>
               </div>
             </div>
           </>

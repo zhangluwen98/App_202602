@@ -450,50 +450,27 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
   return (
     <div className={`flex flex-col h-screen ${isAuthorMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <header className={`
-        sticky top-0 z-50 backdrop-blur-md border-b transition-colors
-        ${isAuthorMode ? 'bg-gray-900/90 border-gray-800' : 'bg-white/90 border-gray-100'}
-        ${isMobileMode ? 'px-3 py-2' : 'px-6 py-4'}
-      `}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={onBack}
-              className={`p-2 rounded-full transition-colors ${isAuthorMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-600'}`}
-            >
-              <ArrowLeft size={isMobileMode ? 20 : 24} />
-            </button>
-            <div className="min-w-0">
-              <h2 className={`font-bold truncate ${isMobileMode ? 'text-base' : 'text-xl'} ${isAuthorMode ? 'text-white' : 'text-gray-800'}`}>
-                {story.title}
-              </h2>
-              <div className="flex items-center gap-2">
-                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${isAuthorMode ? 'bg-purple-900/50 text-purple-300' : 'bg-sherry-50 text-sherry-600'}`}>
-                  第 {currentChapterIndex + 1} 章
-                </span>
-                <span className={`text-[10px] truncate ${isAuthorMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                  {chapter.title}
-                </span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-1 sm:gap-2">
-            <button className={`p-2 rounded-full transition-colors ${isAuthorMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-600'}`}>
-              <Share2 size={isMobileMode ? 18 : 20} />
-            </button>
-            <button 
-              onClick={() => setShowChapterDirectory(!showChapterDirectory)}
-              className={`p-2 rounded-full transition-colors ${showChapterDirectory ? (isAuthorMode ? 'bg-purple-900/30 text-purple-400' : 'bg-sherry-50 text-sherry-600') : (isAuthorMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-600')}`}
-            >
-              <BookOpen size={isMobileMode ? 18 : 20} />
-            </button>
-            <button className={`p-2 rounded-full transition-colors ${isAuthorMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-600'}`}>
-              <Settings size={isMobileMode ? 18 : 20} />
-            </button>
-          </div>
+      <div className="sticky top-0 z-30 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between" style={{ minHeight: '60px' }}>
+        <button onClick={onBack} className="p-2 -ml-2 text-gray-400 hover:text-gray-600 flex-shrink-0">
+          <ArrowLeft size={24} />
+        </button>
+        <div className="flex-1 min-w-0 px-2 text-center">
+          <h2 className={`font-black text-gray-900 truncate ${isMobileMode ? 'text-sm' : 'text-base'}`}>{story.title}</h2>
+          <p className="text-[10px] text-gray-400 font-medium truncate mt-0.5">
+            {chapter.title}
+          </p>
         </div>
-      </header>
+        <div className="flex items-center flex-shrink-0">
+          <button className="p-2 text-gray-400 hover:text-gray-600"><Share2 size={18} /></button>
+          <button 
+            onClick={() => setShowChapterDirectory(!showChapterDirectory)}
+            className="p-2 text-gray-400 hover:text-gray-600"
+          >
+            <BookOpen size={18} />
+          </button>
+          <button className="p-2 text-gray-400 hover:text-gray-600"><Settings size={18} /></button>
+        </div>
+      </div>
 
       {/* Chat Area */}
       <div className={`flex-1 overflow-y-auto ${isMobileMode ? 'px-3 py-3 space-y-2' : 'px-6 py-6 space-y-4'} ${isAuthorMode ? 'bg-gray-900' : 'bg-transparent'}`}>
@@ -599,23 +576,23 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
 
             {/* Character Message (Bubble) */}
             {msg.sender === 'character' && (
-              <div className="w-full flex justify-start my-3 px-2">
+              <div className="w-full flex flex-row justify-start my-3 px-2">
                 <motion.div 
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, ease: "easeOut" }}
-                  className={`flex items-start gap-2.5 ${isMobileMode ? 'max-w-[85%]' : 'max-w-[75%]'}`}
+                  className={`flex flex-row items-start ${isMobileMode ? 'max-w-[85%]' : 'max-w-[75%]'}`}
                 >
                   {/* Avatar Container - Fixed Size */}
                   <div 
-                    style={{ width: isMobileMode ? '40px' : '48px', height: isMobileMode ? '40px' : '48px' }}
+                    style={{ width: isMobileMode ? '40px' : '48px', height: isMobileMode ? '40px' : '48px', marginRight: '10px' }}
                     className="rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-white"
                   >
                     <img src={(activeCharacter || character).avatar} alt="Avatar" className="w-full h-full object-cover" />
                   </div>
                   
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[10px] text-gray-400 font-medium ml-1">{character.name}</span>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-gray-400 font-medium ml-1 mb-1">{character.name}</span>
                     <div className={`
                       bg-white text-gray-800 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm
                       ${isMobileMode ? 'px-4 py-2.5 text-sm leading-6' : 'px-5 py-3 text-base leading-7'}
@@ -854,29 +831,30 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
       {/* Input Area */}
       <div className={`
         ${isMobileMode ? 'px-4 py-3 pb-6' : 'px-8 py-4'} 
-        border-t flex items-center gap-2 transition-colors z-20 min-h-[64px]
+        border-t flex flex-row items-center transition-colors z-20 min-h-[64px]
         ${isAuthorMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}
       `}>
         {!isAuthorMode && (
-          <button className={`p-2 rounded-full flex-shrink-0 transition-colors ${isAuthorMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}>
+          <button className="p-2 flex-shrink-0 text-gray-400 hover:text-gray-600" style={{ marginRight: '8px' }}>
             <Mic size={isMobileMode ? 20 : 24} />
           </button>
         )}
         
         <div className={`
           flex-1 rounded-2xl ${isMobileMode ? 'px-4 py-2' : 'px-6 py-3'} 
-          flex items-center transition-all focus-within:ring-2 focus-within:ring-sherry-200
+          flex flex-row items-center transition-all
           ${isAuthorMode ? 'bg-gray-800' : 'bg-gray-100'}
         `}>
           <input
             type="text"
             placeholder={isAuthorMode ? "续写剧情或添加旁白..." : "输入你想说的话..."}
             className={`
-              flex-1 bg-transparent border-none outline-none placeholder-gray-400
+              flex-1 bg-transparent border-none outline-none appearance-none
               ${isMobileMode ? 'text-sm' : 'text-base'} 
               ${isAuthorMode ? 'text-white' : 'text-gray-700'}
               py-1
             `}
+            style={{ WebkitAppearance: 'none', boxShadow: 'none' }}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -884,7 +862,7 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
         </div>
 
         {!isAuthorMode && (
-          <button className={`p-2 rounded-full flex-shrink-0 transition-colors ${isAuthorMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}>
+          <button className="p-2 flex-shrink-0 text-gray-400 hover:text-gray-600" style={{ marginLeft: '8px', marginRight: '8px' }}>
             <Gift size={isMobileMode ? 20 : 24} />
           </button>
         )}
@@ -896,10 +874,11 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
             p-3 rounded-2xl transition-all flex-shrink-0
             ${inputValue.trim() 
               ? (isAuthorMode 
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/30' 
-                  : 'bg-sherry-500 text-white shadow-lg shadow-sherry-200') 
+                  ? 'bg-purple-600 text-white shadow-lg' 
+                  : 'bg-sherry-500 text-white shadow-lg') 
               : 'bg-gray-200 text-gray-400'}
           `}
+          style={{ marginLeft: isAuthorMode ? '8px' : '0' }}
         >
           <Send size={isMobileMode ? 18 : 20} />
         </button>

@@ -5,9 +5,9 @@ export default function Home({ novels, onSelectStory, isMobileMode }) {
   return (
     <div className="pb-16">
       {/* Header */}
-      <header className={`bg-white/80 backdrop-blur-md sticky top-0 z-[50] border-b border-gray-100 flex justify-between items-center transition-all ${isMobileMode ? 'px-4 py-3' : 'px-8 py-5'}`}>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-sherry-500 rounded-lg flex items-center justify-center shadow-lg shadow-sherry-200">
+      <header className={`bg-white sticky top-0 z-[50] border-b border-gray-100 flex flex-row justify-between items-center transition-all ${isMobileMode ? 'px-4 py-3' : 'px-8 py-5'}`}>
+        <div className="flex flex-row items-center">
+          <div className="w-8 h-8 bg-sherry-500 rounded-lg flex items-center justify-center shadow-lg shadow-sherry-200" style={{ marginRight: '8px' }}>
             <span className="text-white font-black text-xl italic">S</span>
           </div>
           <h1 className={`${isMobileMode ? 'text-xl' : 'text-2xl'} font-black tracking-tight text-gray-900`}>
