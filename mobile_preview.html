@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>雪梨App - 移动端优先预览</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .safe-pb { padding-bottom: constant(env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); }
+        .honor-flex-fix { display: -webkit-box !important; display: -webkit-flex !important; display: flex !important; }
+        .word-break-all { word-break: break-all !important; word-wrap: break-word !important; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        [x-cloak] { display: none !important; }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sherry: {
+                            50: '#FFF3E0', 100: '#FFE0B2', 200: '#FFCC80',
+                            300: '#FFB74D', 400: '#FFA726', 500: '#FF8A65',
+                            600: '#FB8C00', 700: '#F57C00', 800: '#EF6C00', 900: '#E65100',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 overflow-x-hidden" x-data="{ view: 'home', showDirectory: false }">
+    <div x-show="view === 'home'" x-transition class="flex flex-col min-h-screen">
+        <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex items-center justify-between">
+            <h1 class="text-xl font-black text-sherry-500 tracking-tighter">雪梨App</h1>
+            <div class="flex gap-4 text-gray-400">
+                <i data-lucide="search" class="w-6 h-6"></i>
+                <i data-lucide="bell" class="w-6 h-6"></i>
+            </div>
+        </header>
+        <main class="flex-1 overflow-y-auto no-scrollbar pb-24">
+            <section class="p-4 md:p-8">
+                <div class="relative h-48 md:h-80 w-full rounded-2xl overflow-hidden shadow-lg group">
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2000" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Banner">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-6 flex flex-col justify-end">
+                        <span class="bg-sherry-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full w-fit mb-2">本周主推</span>
+                        <h2 class="text-white text-xl md:text-3xl font-black">星际穿越：最后的玫瑰</h2>
+                        <p class="text-white/80 text-xs md:text-sm mt-1 line-clamp-1 italic">“在永恒的寂静中，爱是唯一的引力。”</p>
+                    </div>
+                </div>
+            </section>
+            <section class="px-4 md:px-8 space-y-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-black text-gray-800">热门连载</h3>
+                    <span class="text-xs text-gray-400 font-bold">查看全部 <i data-lucide="chevron-right" class="inline w-3 h-3"></i></span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+                    <template x-for="i in [1,2,3,4]" :key="i">
+                        <div @click="view = 'reader'" class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 flex flex-row md:flex-col h-32 md:h-auto cursor-pointer">
+                            <div class="w-24 md:w-full aspect-[3/4] flex-shrink-0 relative overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <div class="absolute top-2 left-2 bg-sherry-500/90 text-white text-[9px] px-2 py-0.5 rounded-full font-bold">连载中</div>
+                            </div>
+                            <div class="flex-1 p-3 md:p-5 flex flex-col justify-between min-w-0">
+                                <div class="min-w-0">
+                                    <h4 class="font-black text-gray-900 group-hover:text-sherry-500 transition-colors truncate text-sm md:text-lg">赛博纪元：深海之网</h4>
+                                    <p class="text-[10px] md:text-xs text-gray-400 mt-1 font-bold italic truncate">@ 艾萨克·阿西莫夫</p>
+                                    <p class="text-[10px] md:text-sm text-gray-500 mt-2 line-clamp-2 leading-relaxed word-break-all">在一个数字灵魂可以被交易的世界，一位黑客发现了一个足以改变人类定义的秘密...</p>
+                                </div>
+                                <div class="flex items-center justify-between mt-2">
+                                    <div class="flex gap-1">
+                                        <span class="text-[9px] md:text-xs bg-gray-50 text-gray-500 font-bold px-1.5 py-0.5 rounded border border-gray-100">科幻</span>
+                                        <span class="text-[9px] md:text-xs bg-gray-50 text-gray-500 font-bold px-1.5 py-0.5 rounded border border-gray-100">硬核</span>
+                                    </div>
+                                    <div class="flex items-center gap-1 text-sherry-500">
+                                        <i data-lucide="heart" class="w-3 h-3 fill-current"></i>
+                                        <span class="text-[10px] font-black">9.8</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </section>
+        </main>
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 h-16 safe-pb flex justify-around items-center z-50 shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
+            <div class="flex flex-col items-center text-sherry-500 py-1 px-4">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span class="text-[10px] font-bold mt-1">首页</span>
+            </div>
+            <div class="flex flex-col items-center text-gray-400 py-1 px-4">
+                <i data-lucide="book" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium mt-1">书架</span>
+            </div>
+            <div class="flex flex-col items-center text-gray-400 py-1 px-4">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium mt-1">我的</span>
+            </div>
+        </nav>
+    </div>
+    <div x-show="view === 'reader'" x-cloak class="fixed inset-0 bg-white z-50 flex flex-col" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+        <header class="sticky top-0 z-30 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between min-h-[64px]">
+            <button @click="view = 'home'" class="p-2 -ml-2 text-gray-400 hover:text-gray-600 min-h-12 min-w-12 flex items-center justify-center">
+                <i data-lucide="arrow-left" class="w-6 h-6"></i>
+            </button>
+            <div class="flex-1 text-center min-w-0 px-2">
+                <h2 class="font-black text-gray-900 truncate text-sm">星际穿越：最后的玫瑰</h2>
+                <div class="flex items-center justify-center gap-1 mt-0.5">
+                    <span class="w-1 h-1 bg-sherry-400 rounded-full"></span>
+                    <p class="text-[10px] text-gray-400 font-bold truncate">第一章：寂静的引力</p>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <button @click="showDirectory = true" class="p-2 text-gray-400 min-h-12 min-w-12 flex items-center justify-center">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                </button>
+                <button class="p-2 text-gray-400 min-h-12 min-w-12 flex items-center justify-center">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </header>
+        <div class="flex-1 overflow-y-auto px-4 py-6 space-y-6 bg-[#FAF9F6] no-scrollbar">
+            <div class="bg-white/60 rounded-2xl p-4 shadow-sm border border-gray-100/50">
+                <p class="text-gray-700 leading-relaxed text-base word-break-all">
+                    星元2077年，最后一朵玫瑰在空间站的无土培养槽中枯萎。
+                    你望着窗外深邃的星空，耳边传来了AI管家那冰冷却温柔的提示音...
+                </p>
+            </div>
+            <div class="flex items-start gap-3 max-w-[90%] honor-flex-fix">
+                <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 shadow-sm honor-avatar-fix">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <span class="text-[10px] text-gray-400 font-black ml-1">诺亚 (AI)</span>
+                    <div class="bg-white text-gray-700 px-4 py-3 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm text-sm leading-relaxed word-break-all">
+                        指挥官，氧气储量仅剩15%。我们需要在三小时内找到补给。
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-row-reverse items-start gap-3 max-w-[90%] ml-auto honor-flex-fix">
+                <div class="flex flex-col items-end gap-1">
+                    <div class="bg-gradient-to-br from-sherry-500 to-sherry-600 text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-md text-sm leading-relaxed word-break-all">
+                        启动紧急协议。把多余的电力调拨给生命维持系统。
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white border-t border-gray-100 safe-pb">
+            <div class="px-4 py-3 flex items-center justify-between honor-flex-fix border-b border-gray-50">
+                <div class="flex items-center gap-3">
+                    <div class="relative w-10 h-10 flex-shrink-0">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200" class="w-full h-full object-cover rounded-xl border-2 border-white shadow-md">
+                        <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-sm text-gray-900 leading-tight">诺亚</h3>
+                        <div class="flex items-center gap-1 mt-0.5">
+                            <i data-lucide="heart" class="w-3 h-3 text-sherry-500 fill-current"></i>
+                            <span class="text-[10px] text-sherry-500 font-black">Lv.3 亲密无间</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="flex items-center gap-1.5 px-4 py-2 bg-gray-100 rounded-full text-[10px] font-black text-gray-500 min-h-10">
+                    <i data-lucide="wand2" class="w-3 h-3"></i> 开始创作
+                </button>
+            </div>
+            <div class="px-4 py-3 flex items-center gap-3">
+                <button class="p-2.5 text-gray-400 bg-gray-50 rounded-2xl min-h-12 min-w-12 flex items-center justify-center">
+                    <i data-lucide="mic" class="w-6 h-6"></i>
+                </button>
+                <div class="flex-1 bg-gray-100 rounded-2xl px-4 py-2.5 flex items-center">
+                    <input type="text" placeholder="输入你想说的话..." class="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 h-8">
+                </div>
+                <button class="p-3.5 bg-sherry-500 text-white rounded-2xl shadow-lg shadow-sherry-200 min-h-12 min-w-12 flex items-center justify-center">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div x-show="showDirectory" x-cloak class="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4" x-transition>
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showDirectory = false"></div>
+        <div class="relative bg-white w-full md:max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl overflow-hidden max-h-[80vh] flex flex-col" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0">
+            <div class="px-4 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="font-black text-gray-800">章节目录</h3>
+                <button @click="showDirectory = false" class="p-2 hover:bg-gray-100 rounded-full min-h-10 min-w-10 flex items-center justify-center">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar">
+                <template x-for="i in [1,2,3,4,5]" :key="i">
+                    <button class="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all text-left min-h-16">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-black text-gray-300 w-6" x-text="'0'+i"></span>
+                            <span class="text-sm font-bold text-gray-700" x-text="'第'+i+'章：未知的信号'"></span>
+                        </div>
+                        <i data-lucide="lock" class="w-4 h-4 text-gray-300" x-show="i > 1"></i>
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500" x-show="i === 1"></i>
+                    </button>
+                </template>
+            </div>
+        </div>
+    </div>
+    <script>
+        lucide.createIcons();
+        window.addEventListener("load", function() {
+            setTimeout(function() { window.scrollTo(0, 1); }, 0);
+        });
+    </script>
+</body>
+</html>
