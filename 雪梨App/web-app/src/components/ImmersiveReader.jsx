@@ -5,7 +5,7 @@ import { NOVELS } from '../novels/index';
 
 const BASE_URL = import.meta.env.BASE_URL || '/';
 
-export default function ImmersiveReader({ storyId, onBack }) {
+export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
   const [story, setStory] = useState(null);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [messages, setMessages] = useState([]);
@@ -453,31 +453,31 @@ export default function ImmersiveReader({ storyId, onBack }) {
   return (
     <div className="h-full flex flex-col bg-gradient-to-br from-[#FAF9F6] to-[#F5F3EF] font-sans">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 px-3 py-2 flex justify-between items-center shadow-sm z-20">
+      <div className={`bg-white/80 backdrop-blur-md border-b border-gray-100 flex justify-between items-center shadow-sm z-20 ${isMobileMode ? 'px-3 py-2' : 'px-6 py-4'}`}>
         <div className="flex items-center gap-2">
-          <button onClick={onBack} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors">
-            <ArrowLeft size={16} className="text-gray-600" />
+          <button onClick={onBack} className={`${isMobileMode ? 'p-1.5' : 'p-2'} hover:bg-gray-100 rounded-full transition-colors`}>
+            <ArrowLeft size={isMobileMode ? 16 : 20} className="text-gray-600" />
           </button>
-          <button onClick={() => setShowChapterDirectory(true)} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors">
-            <BookOpen size={16} className="text-gray-600" />
+          <button onClick={() => setShowChapterDirectory(true)} className={`${isMobileMode ? 'p-1.5' : 'p-2'} hover:bg-gray-100 rounded-full transition-colors`}>
+            <BookOpen size={isMobileMode ? 16 : 20} className="text-gray-600" />
           </button>
           <div className="min-w-0">
-            <h2 className="text-xs font-semibold text-gray-800 line-clamp-1">{story.title}</h2>
-            <p className="text-[10px] text-gray-400">{chapter.title}</p>
+            <h2 className={`${isMobileMode ? 'text-xs' : 'text-base'} font-semibold text-gray-800 line-clamp-1`}>{story.title}</h2>
+            <p className={`${isMobileMode ? 'text-[10px]' : 'text-sm'} text-gray-400`}>{chapter.title}</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <button className="p-1.5 hover:bg-gray-100 rounded-full text-gray-400">
-            <Settings size={14} />
+          <button className={`${isMobileMode ? 'p-1.5' : 'p-2'} hover:bg-gray-100 rounded-full text-gray-400`}>
+            <Settings size={isMobileMode ? 14 : 18} />
           </button>
-          <button className="p-1.5 hover:bg-gray-100 rounded-full text-gray-400">
-            <Share2 size={14} />
+          <button className={`${isMobileMode ? 'p-1.5' : 'p-2'} hover:bg-gray-100 rounded-full text-gray-400`}>
+            <Share2 size={isMobileMode ? 14 : 18} />
           </button>
         </div>
       </div>
 
       {/* Chat Area */}
-      <div className={`flex-1 overflow-y-auto px-3 py-3 space-y-2 ${isAuthorMode ? 'bg-gray-900' : 'bg-transparent'}`}>
+      <div className={`flex-1 overflow-y-auto ${isMobileMode ? 'px-3 py-3 space-y-2' : 'px-6 py-6 space-y-4'} ${isAuthorMode ? 'bg-gray-900' : 'bg-transparent'}`}>
         {messages.map((msg) => (
           <motion.div
             key={msg.id}
@@ -490,12 +490,13 @@ export default function ImmersiveReader({ storyId, onBack }) {
             {msg.sender === 'narrator' && msg.type === 'story' && (
               <div className="w-full">
                 {msg.isTitle ? (
-                  <h1 className="text-2xl font-bold text-gray-900 mb-4 text-center">{msg.text}</h1>
+                  <h1 className={`${isMobileMode ? 'text-2xl' : 'text-4xl'} font-bold text-gray-900 mb-4 text-center`}>{msg.text}</h1>
                 ) : (
                   <div 
                     onClick={() => handleParagraphClick(msg.paragraphId, msg.parts)}
                     className={`
-                      cursor-pointer rounded-xl px-3 py-2.5 transition-all duration-300
+                      cursor-pointer rounded-xl transition-all duration-300
+                      ${isMobileMode ? 'px-3 py-2.5' : 'px-6 py-4'}
                       ${activeQuote === msg.paragraphId 
                         ? 'bg-gradient-to-r from-sherry-50 to-orange-50 shadow-md ring-2 ring-sherry-200' 
                         : 'hover:bg-white/60 hover:shadow-sm'
@@ -509,9 +510,9 @@ export default function ImmersiveReader({ storyId, onBack }) {
                           initial={{ opacity: 0, x: -8 }}
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -8 }}
-                          className="mt-2 flex items-center gap-2 text-xs text-sherry-600 font-medium"
+                          className={`mt-2 flex items-center gap-2 ${isMobileMode ? 'text-xs' : 'text-sm'} text-sherry-600 font-medium`}
                         >
-                          <Sparkles size={14} />
+                          <Sparkles size={isMobileMode ? 14 : 18} />
                           <span>已引用到对话</span>
                         </motion.div>
                       )}
@@ -524,12 +525,12 @@ export default function ImmersiveReader({ storyId, onBack }) {
             {/* Quote Message */}
             {msg.sender === 'system' && msg.type === 'quote' && (
               <div className="w-full flex justify-center my-2">
-                <div className="bg-white/90 border-l-4 border-sherry-400 rounded-r-lg p-3 max-w-[85%] shadow-sm">
+                <div className={`bg-white/90 border-l-4 border-sherry-400 rounded-r-lg shadow-sm ${isMobileMode ? 'p-3 max-w-[85%]' : 'p-6 max-w-[70%]'}`}>
                   <div className="flex items-start gap-2">
-                    <Quote size={14} className="text-sherry-400 flex-shrink-0 mt-0.5" />
+                    <Quote size={isMobileMode ? 14 : 20} className="text-sherry-400 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs text-sherry-600 font-medium mb-1">故事引用</p>
-                      <p className="text-sm text-gray-600 italic leading-6">{msg.text}</p>
+                      <p className={`${isMobileMode ? 'text-xs' : 'text-sm'} text-sherry-600 font-medium mb-1`}>故事引用</p>
+                      <p className={`${isMobileMode ? 'text-sm' : 'text-base'} text-gray-600 italic leading-6`}>{msg.text}</p>
                     </div>
                   </div>
                 </div>
@@ -539,9 +540,9 @@ export default function ImmersiveReader({ storyId, onBack }) {
             {/* Chapter Divider */}
             {msg.sender === 'system' && msg.type === 'chapter-divider' && (
               <div className="w-full flex flex-col items-center justify-center my-4">
-                <div className="flex items-center gap-3 w-full max-w-[80%]">
+                <div className={`flex items-center gap-3 w-full ${isMobileMode ? 'max-w-[80%]' : 'max-w-[60%]'}`}>
                   <div className="flex-1 h-px bg-gray-300"></div>
-                  <span className="text-xs text-gray-500 font-medium whitespace-nowrap">{msg.text}</span>
+                  <span className={`${isMobileMode ? 'text-xs' : 'text-sm'} text-gray-500 font-medium whitespace-nowrap`}>{msg.text}</span>
                   <div className="flex-1 h-px bg-gray-300"></div>
                 </div>
                 {!chapter.isLastChapter && story.chapters[currentChapterIndex + 1] && (
@@ -555,9 +556,9 @@ export default function ImmersiveReader({ storyId, onBack }) {
                       setCurrentChapterIndex(nextChapterIndex);
                       initializeChapter(story, nextChapterIndex);
                     }}
-                    className="mt-3 bg-gradient-to-r from-sherry-500 to-orange-500 text-white px-6 py-2.5 rounded-full font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
+                    className={`mt-3 bg-gradient-to-r from-sherry-500 to-orange-500 text-white rounded-full font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 ${isMobileMode ? 'px-6 py-2.5 text-sm' : 'px-8 py-3 text-base'}`}
                   >
-                    <BookOpen size={16} />
+                    <BookOpen size={isMobileMode ? 16 : 20} />
                     <span>探索下一章：{story.chapters[currentChapterIndex + 1].title}</span>
                   </motion.button>
                 )}
@@ -567,8 +568,8 @@ export default function ImmersiveReader({ storyId, onBack }) {
             {/* Author Narrator (Non-bubble) */}
             {msg.sender === 'narrator' && !msg.type && (
               <div className="w-full flex justify-center my-2">
-                <div className="bg-purple-100 border border-purple-200 text-purple-800 text-sm font-medium px-4 py-2 rounded-full flex items-center gap-2 shadow-sm max-w-[85%]">
-                  <Sparkles size={14} />
+                <div className={`bg-purple-100 border border-purple-200 text-purple-800 font-medium rounded-full flex items-center gap-2 shadow-sm ${isMobileMode ? 'px-4 py-2 text-sm max-w-[85%]' : 'px-6 py-3 text-base max-w-[70%]'}`}>
+                  <Sparkles size={isMobileMode ? 14 : 18} />
                   {msg.text}
                 </div>
               </div>
@@ -581,12 +582,12 @@ export default function ImmersiveReader({ storyId, onBack }) {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.25 }}
-                  className="flex items-end gap-2 max-w-[75%]"
+                  className={`flex items-end gap-2 ${isMobileMode ? 'max-w-[75%]' : 'max-w-[60%]'}`}
                 >
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 shadow-md">
+                  <div className={`${isMobileMode ? 'w-8 h-8' : 'w-12 h-12'} rounded-full overflow-hidden flex-shrink-0 shadow-md`}>
                     <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover" />
                   </div>
-                  <div className="bg-white text-gray-700 px-3 py-2 rounded-2xl rounded-bl-sm border border-gray-100 shadow-sm text-xs leading-5">
+                  <div className={`bg-white text-gray-700 rounded-2xl rounded-bl-sm border border-gray-100 shadow-sm ${isMobileMode ? 'px-3 py-2 text-xs leading-5' : 'px-5 py-3 text-sm leading-6'}`}>
                     {msg.text}
                   </div>
                 </motion.div>
@@ -600,9 +601,9 @@ export default function ImmersiveReader({ storyId, onBack }) {
                   initial={{ opacity: 0, x: 8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.25 }}
-                  className="flex items-end gap-2 max-w-[75%]"
+                  className={`flex items-end gap-2 ${isMobileMode ? 'max-w-[75%]' : 'max-w-[60%]'}`}
                 >
-                  <div className="bg-sherry-500 text-white px-3 py-2 rounded-2xl rounded-br-sm shadow-md text-xs leading-5">
+                  <div className={`bg-sherry-500 text-white rounded-2xl rounded-br-sm shadow-md ${isMobileMode ? 'px-3 py-2 text-xs leading-5' : 'px-5 py-3 text-sm leading-6'}`}>
                     {msg.text}
                   </div>
                 </motion.div>
@@ -735,12 +736,12 @@ export default function ImmersiveReader({ storyId, onBack }) {
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.25 }}
-              className="flex items-end gap-2 max-w-[70%]"
+              className={`flex items-end gap-2 ${isMobileMode ? 'max-w-[70%]' : 'max-w-[50%]'}`}
             >
-              <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 shadow-md">
+              <div className={`${isMobileMode ? 'w-10 h-10' : 'w-14 h-14'} rounded-full overflow-hidden flex-shrink-0 shadow-md`}>
                 <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover" />
               </div>
-              <div className="bg-white px-4 py-3 rounded-2xl rounded-bl-sm border border-gray-100 shadow-sm flex gap-1.5">
+              <div className={`bg-white rounded-2xl rounded-bl-sm border border-gray-100 shadow-sm flex gap-1.5 ${isMobileMode ? 'px-4 py-3' : 'px-6 py-4'}`}>
                 <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
                 <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-75"></span>
                 <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></span>
@@ -752,25 +753,25 @@ export default function ImmersiveReader({ storyId, onBack }) {
       </div>
 
       {/* Character Info Bar */}
-      <div className={`px-3 py-1.5 border-t flex items-center justify-between transition-colors ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+      <div className={`${isMobileMode ? 'px-3 py-1.5' : 'px-6 py-2'} border-t flex items-center justify-between transition-colors ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
         <div className="flex items-center gap-2">
           <div className="relative">
-            <div className="w-7 h-7 rounded-full overflow-hidden border-2 border-white shadow-md">
+            <div className={`${isMobileMode ? 'w-7 h-7' : 'w-10 h-10'} rounded-full overflow-hidden border-2 border-white shadow-md`}>
               <img src={(activeCharacter || character).avatar} alt={(activeCharacter || character).name} className="w-full h-full object-cover" />
             </div>
             <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 border-2 border-white rounded-full"></div>
           </div>
           <div className="min-w-0">
-            <h3 className={`font-bold text-xs ${isAuthorMode ? 'text-white' : 'text-gray-800'}`}>{(activeCharacter || character).name}</h3>
+            <h3 className={`font-bold ${isMobileMode ? 'text-xs' : 'text-sm'} ${isAuthorMode ? 'text-white' : 'text-gray-800'}`}>{(activeCharacter || character).name}</h3>
             <div className="flex items-center gap-0.5">
               {isAuthorMode ? (
-                <span className="text-[10px] text-purple-400 font-medium flex items-center gap-0.5">
-                  <Wand2 size={8} /> 作者模式
+                <span className={`${isMobileMode ? 'text-[10px]' : 'text-xs'} text-purple-400 font-medium flex items-center gap-0.5`}>
+                  <Wand2 size={isMobileMode ? 8 : 10} /> 作者模式
                 </span>
               ) : (
                 <>
                   <HeartIcon filled />
-                  <span className="text-[10px] text-sherry-500 font-medium">
+                  <span className={`${isMobileMode ? 'text-[10px]' : 'text-xs'} text-sherry-500 font-medium`}>
                     {characterIntimacy[(activeCharacter || character).id]?.currentStatus || '初次相遇'}
                   </span>
                 </>
@@ -781,24 +782,24 @@ export default function ImmersiveReader({ storyId, onBack }) {
         
         <button 
           onClick={() => setIsAuthorMode(!isAuthorMode)}
-          className={`p-1 rounded-full transition-colors ${isAuthorMode ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-400 hover:text-purple-600'}`}
+          className={`${isMobileMode ? 'p-1' : 'p-1.5'} rounded-full transition-colors ${isAuthorMode ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-400 hover:text-purple-600'}`}
         >
-          <Wand2 size={12} />
+          <Wand2 size={isMobileMode ? 12 : 16} />
         </button>
       </div>
 
       {/* Input Area */}
-      <div className={`px-3 py-2 border-t flex items-center gap-2 transition-colors ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+      <div className={`${isMobileMode ? 'px-3 py-2' : 'px-6 py-3'} border-t flex items-center gap-2 transition-colors ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
         {!isAuthorMode && (
           <button className="text-gray-400 hover:text-gray-600">
-            <Mic size={16} />
+            <Mic size={isMobileMode ? 16 : 20} />
           </button>
         )}
-        <div className={`flex-1 rounded-full px-3 py-1.5 flex items-center ${isAuthorMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+        <div className={`flex-1 rounded-full ${isMobileMode ? 'px-3 py-1.5' : 'px-4 py-2'} flex items-center ${isAuthorMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
           <input
             type="text"
             placeholder={isAuthorMode ? "输入剧情旁白..." : "和TA说点什么..."}
-            className={`flex-1 bg-transparent border-none outline-none text-xs placeholder-gray-400 ${isAuthorMode ? 'text-white' : 'text-gray-700'}`}
+            className={`flex-1 bg-transparent border-none outline-none placeholder-gray-400 ${isMobileMode ? 'text-xs' : 'text-sm'} ${isAuthorMode ? 'text-white' : 'text-gray-700'}`}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -806,19 +807,19 @@ export default function ImmersiveReader({ storyId, onBack }) {
         </div>
         {!isAuthorMode && (
           <button className="text-gray-400 hover:text-gray-600">
-            <Gift size={16} />
+            <Gift size={isMobileMode ? 16 : 20} />
           </button>
         )}
         <button 
           onClick={handleSend}
           disabled={!inputValue.trim()}
-          className={`p-1.5 rounded-full transition-colors ${
+          className={`${isMobileMode ? 'p-1.5' : 'p-2'} rounded-full transition-colors ${
             inputValue.trim() 
               ? (isAuthorMode ? 'bg-purple-600 text-white' : 'bg-sherry-500 text-white shadow-md') 
               : (isAuthorMode ? 'bg-gray-600 text-gray-400' : 'bg-gray-200 text-white')
           }`}
         >
-          <Send size={14} />
+          <Send size={isMobileMode ? 14 : 18} />
         </button>
       </div>
 
