@@ -20,23 +20,28 @@ function App() {
   };
 
   return (
-    <div className="flex justify-center bg-gray-200 min-h-screen font-sans">
-      <div className={`${isMobileMode ? 'w-[448px]' : 'w-full max-w-6xl'} bg-white min-h-screen shadow-2xl relative overflow-hidden flex flex-col`}>
+    <div className="bg-gray-100 min-h-screen font-sans flex justify-center">
+      {/* Main Container: Full width on mobile, limited on desktop in mobile mode */}
+      <div className={`
+        ${isMobileMode ? 'w-full max-w-md' : 'w-full max-w-6xl'} 
+        bg-white min-h-screen shadow-xl relative overflow-hidden flex flex-col transition-all duration-300
+      `}>
         
-        <div className="absolute top-4 right-4 z-50">
+        {/* Toggle Button - Float on right */}
+        <div className="absolute top-4 right-4 z-[60]">
           <button 
             onClick={() => setIsMobileMode(!isMobileMode)}
-            className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200"
+            className="flex items-center gap-2 px-3 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all border border-gray-100 group"
           >
             {isMobileMode ? (
               <>
-                <Smartphone size={16} className="text-sherry-500" />
-                <span className="text-xs font-medium text-gray-700">移动版</span>
+                <Monitor size={16} className="text-sherry-500 group-hover:scale-110 transition-transform" />
+                <span className="text-xs font-bold text-gray-700">网页版</span>
               </>
             ) : (
               <>
-                <Monitor size={16} className="text-sherry-500" />
-                <span className="text-xs font-medium text-gray-700">网页版</span>
+                <Smartphone size={16} className="text-sherry-500 group-hover:scale-110 transition-transform" />
+                <span className="text-xs font-bold text-gray-700">移动版</span>
               </>
             )}
           </button>

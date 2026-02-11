@@ -15,15 +15,12 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
   const [activeQuote, setActiveQuote] = useState(null);
   const [dialogueCount, setDialogueCount] = useState(0);
   const [showChapterEnding, setShowChapterEnding] = useState(false);
-  const [showChapterComplete, setShowChapterComplete] = useState(false);
-  const [currentParagraphs, setCurrentParagraphs] = useState([]);
   const [triggeredParagraphs, setTriggeredParagraphs] = useState(new Set());
   const [chapterDividerAdded, setChapterDividerAdded] = useState(false);
   const [showChapterDirectory, setShowChapterDirectory] = useState(false);
   const [unlockedChapters, setUnlockedChapters] = useState(new Set([0]));
   const [activeCharacter, setActiveCharacter] = useState(null);
   const [characterIntimacy, setCharacterIntimacy] = useState({});
-  const [userChoices, setUserChoices] = useState([]);
   const [showIntimacyChange, setShowIntimacyChange] = useState(null);
   const messagesEndRef = useRef(null);
 
@@ -451,30 +448,52 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
   const character = story.characters[0];
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-[#FAF9F6] to-[#F5F3EF] font-sans">
+    <div className={`flex flex-col h-screen ${isAuthorMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className={`bg-white/80 backdrop-blur-md border-b border-gray-100 flex justify-between items-center shadow-sm z-20 ${isMobileMode ? 'px-3 py-2' : 'px-6 py-4'}`}>
-        <div className="flex items-center gap-2">
-          <button onClick={onBack} className={`${isMobileMode ? 'p-1.5' : 'p-2'} hover:bg-gray-100 rounded-full transition-colors`}>
-            <ArrowLeft size={isMobileMode ? 16 : 20} className="text-gray-600" />
-          </button>
-          <button onClick={() => setShowChapterDirectory(true)} className={`${isMobileMode ? 'p-1.5' : 'p-2'} hover:bg-gray-100 rounded-full transition-colors`}>
-            <BookOpen size={isMobileMode ? 16 : 20} className="text-gray-600" />
-          </button>
-          <div className="min-w-0">
-            <h2 className={`${isMobileMode ? 'text-xs' : 'text-base'} font-semibold text-gray-800 line-clamp-1`}>{story.title}</h2>
-            <p className={`${isMobileMode ? 'text-[10px]' : 'text-sm'} text-gray-400`}>{chapter.title}</p>
+      <header className={`
+        sticky top-0 z-50 backdrop-blur-md border-b transition-colors
+        ${isAuthorMode ? 'bg-gray-900/90 border-gray-800' : 'bg-white/90 border-gray-100'}
+        ${isMobileMode ? 'px-3 py-2' : 'px-6 py-4'}
+      `}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={onBack}
+              className={`p-2 rounded-full transition-colors ${isAuthorMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-600'}`}
+            >
+              <ArrowLeft size={isMobileMode ? 20 : 24} />
+            </button>
+            <div className="min-w-0">
+              <h2 className={`font-bold truncate ${isMobileMode ? 'text-base' : 'text-xl'} ${isAuthorMode ? 'text-white' : 'text-gray-800'}`}>
+                {story.title}
+              </h2>
+              <div className="flex items-center gap-2">
+                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${isAuthorMode ? 'bg-purple-900/50 text-purple-300' : 'bg-sherry-50 text-sherry-600'}`}>
+                  第 {currentChapterIndex + 1} 章
+                </span>
+                <span className={`text-[10px] truncate ${isAuthorMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                  {chapter.title}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-1 sm:gap-2">
+            <button className={`p-2 rounded-full transition-colors ${isAuthorMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-600'}`}>
+              <Share2 size={isMobileMode ? 18 : 20} />
+            </button>
+            <button 
+              onClick={() => setShowChapterDirectory(!showChapterDirectory)}
+              className={`p-2 rounded-full transition-colors ${showChapterDirectory ? (isAuthorMode ? 'bg-purple-900/30 text-purple-400' : 'bg-sherry-50 text-sherry-600') : (isAuthorMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-600')}`}
+            >
+              <BookOpen size={isMobileMode ? 18 : 20} />
+            </button>
+            <button className={`p-2 rounded-full transition-colors ${isAuthorMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-600'}`}>
+              <Settings size={isMobileMode ? 18 : 20} />
+            </button>
           </div>
         </div>
-        <div className="flex items-center gap-1">
-          <button className={`${isMobileMode ? 'p-1.5' : 'p-2'} hover:bg-gray-100 rounded-full text-gray-400`}>
-            <Settings size={isMobileMode ? 14 : 18} />
-          </button>
-          <button className={`${isMobileMode ? 'p-1.5' : 'p-2'} hover:bg-gray-100 rounded-full text-gray-400`}>
-            <Share2 size={isMobileMode ? 14 : 18} />
-          </button>
-        </div>
-      </div>
+      </header>
 
       {/* Chat Area */}
       <div className={`flex-1 overflow-y-auto ${isMobileMode ? 'px-3 py-3 space-y-2' : 'px-6 py-6 space-y-4'} ${isAuthorMode ? 'bg-gray-900' : 'bg-transparent'}`}>
@@ -567,28 +586,42 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
 
             {/* Author Narrator (Non-bubble) */}
             {msg.sender === 'narrator' && !msg.type && (
-              <div className="w-full flex justify-center my-2">
-                <div className={`bg-purple-100 border border-purple-200 text-purple-800 font-medium rounded-full flex items-center gap-2 shadow-sm ${isMobileMode ? 'px-4 py-2 text-sm max-w-[85%]' : 'px-6 py-3 text-base max-w-[70%]'}`}>
-                  <Sparkles size={isMobileMode ? 14 : 18} />
-                  {msg.text}
+              <div className="w-full flex justify-center my-4 px-4">
+                <div className={`
+                  bg-gray-50 border border-gray-100 text-gray-500 font-medium rounded-2xl flex items-center gap-2 shadow-sm italic
+                  ${isMobileMode ? 'px-4 py-3 text-xs max-w-[90%]' : 'px-8 py-4 text-sm max-w-[80%]'}
+                `}>
+                  <Quote size={isMobileMode ? 12 : 16} className="text-gray-300 flex-shrink-0" />
+                  <span className="leading-relaxed">{msg.text}</span>
                 </div>
               </div>
             )}
 
             {/* Character Message (Bubble) */}
             {msg.sender === 'character' && (
-              <div className="w-full flex justify-start my-2">
+              <div className="w-full flex justify-start my-3 px-2">
                 <motion.div 
-                  initial={{ opacity: 0, x: -8 }}
+                  initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className={`flex items-end gap-2 ${isMobileMode ? 'max-w-[75%]' : 'max-w-[60%]'}`}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className={`flex items-start gap-2.5 ${isMobileMode ? 'max-w-[85%]' : 'max-w-[75%]'}`}
                 >
-                  <div className={`${isMobileMode ? 'w-8 h-8' : 'w-12 h-12'} rounded-full overflow-hidden flex-shrink-0 shadow-md`}>
+                  {/* Avatar Container - Fixed Size */}
+                  <div className={`
+                    ${isMobileMode ? 'w-10 h-10' : 'w-12 h-12'} 
+                    rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-white
+                  `}>
                     <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover" />
                   </div>
-                  <div className={`bg-white text-gray-700 rounded-2xl rounded-bl-sm border border-gray-100 shadow-sm ${isMobileMode ? 'px-3 py-2 text-xs leading-5' : 'px-5 py-3 text-sm leading-6'}`}>
-                    {msg.text}
+                  
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] text-gray-400 font-medium ml-1">{character.name}</span>
+                    <div className={`
+                      bg-white text-gray-800 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm
+                      ${isMobileMode ? 'px-4 py-2.5 text-sm leading-6' : 'px-5 py-3 text-base leading-7'}
+                    `}>
+                      {msg.text}
+                    </div>
                   </div>
                 </motion.div>
               </div>
@@ -596,14 +629,18 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
 
             {/* User Message (Bubble) */}
             {msg.sender === 'user' && (
-              <div className="w-full flex justify-end my-2">
+              <div className="w-full flex justify-end my-3 px-2">
                 <motion.div 
-                  initial={{ opacity: 0, x: 8 }}
+                  initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className={`flex items-end gap-2 ${isMobileMode ? 'max-w-[75%]' : 'max-w-[60%]'}`}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className={`flex flex-col items-end gap-1 ${isMobileMode ? 'max-w-[80%]' : 'max-w-[70%]'}`}
                 >
-                  <div className={`bg-sherry-500 text-white rounded-2xl rounded-br-sm shadow-md ${isMobileMode ? 'px-3 py-2 text-xs leading-5' : 'px-5 py-3 text-sm leading-6'}`}>
+                  <span className="text-[10px] text-gray-400 font-medium mr-1">我</span>
+                  <div className={`
+                    bg-gradient-to-br from-sherry-500 to-sherry-600 text-white rounded-2xl rounded-tr-none shadow-md
+                    ${isMobileMode ? 'px-4 py-2.5 text-sm leading-6' : 'px-5 py-3 text-base leading-7'}
+                  `}>
                     {msg.text}
                   </div>
                 </motion.div>
@@ -731,20 +768,25 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
         </AnimatePresence>
         
         {isTyping && (
-          <div className="w-full flex justify-start my-2">
+          <div className="w-full flex justify-start my-3 px-2">
             <motion.div 
-              initial={{ opacity: 0, x: -8 }}
+              initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.25 }}
-              className={`flex items-end gap-2 ${isMobileMode ? 'max-w-[70%]' : 'max-w-[50%]'}`}
+              className={`flex items-start gap-2.5 ${isMobileMode ? 'max-w-[70%]' : 'max-w-[50%]'}`}
             >
-              <div className={`${isMobileMode ? 'w-10 h-10' : 'w-14 h-14'} rounded-full overflow-hidden flex-shrink-0 shadow-md`}>
+              <div className={`
+                ${isMobileMode ? 'w-10 h-10' : 'w-12 h-12'} 
+                rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-white
+              `}>
                 <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover" />
               </div>
-              <div className={`bg-white rounded-2xl rounded-bl-sm border border-gray-100 shadow-sm flex gap-1.5 ${isMobileMode ? 'px-4 py-3' : 'px-6 py-4'}`}>
-                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
-                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-75"></span>
-                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></span>
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] text-gray-400 font-medium ml-1">{character.name}</span>
+                <div className={`bg-white rounded-2xl rounded-tl-none border border-gray-100 shadow-sm flex gap-1.5 ${isMobileMode ? 'px-4 py-3' : 'px-5 py-4'}`}>
+                  <span className="w-1.5 h-1.5 bg-sherry-300 rounded-full animate-bounce"></span>
+                  <span className="w-1.5 h-1.5 bg-sherry-400 rounded-full animate-bounce delay-75"></span>
+                  <span className="w-1.5 h-1.5 bg-sherry-500 rounded-full animate-bounce delay-150"></span>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -753,73 +795,112 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
       </div>
 
       {/* Character Info Bar */}
-      <div className={`${isMobileMode ? 'px-3 py-1.5' : 'px-6 py-2'} border-t flex items-center justify-between transition-colors ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <div className={`${isMobileMode ? 'w-7 h-7' : 'w-10 h-10'} rounded-full overflow-hidden border-2 border-white shadow-md`}>
+      <div className={`
+        ${isMobileMode ? 'px-4 py-2' : 'px-8 py-3'} 
+        border-t flex items-center justify-between transition-colors z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]
+        ${isAuthorMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}
+      `}>
+        <div className="flex items-center gap-3">
+          <div className="relative group cursor-pointer">
+            <div className={`
+              ${isMobileMode ? 'w-10 h-10' : 'w-12 h-12'} 
+              rounded-full overflow-hidden border-2 border-white shadow-md group-hover:scale-105 transition-transform
+            `}>
               <img src={(activeCharacter || character).avatar} alt={(activeCharacter || character).name} className="w-full h-full object-cover" />
             </div>
-            <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 border-2 border-white rounded-full"></div>
+            <div className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
           </div>
           <div className="min-w-0">
-            <h3 className={`font-bold ${isMobileMode ? 'text-xs' : 'text-sm'} ${isAuthorMode ? 'text-white' : 'text-gray-800'}`}>{(activeCharacter || character).name}</h3>
-            <div className="flex items-center gap-0.5">
+            <h3 className={`font-bold ${isMobileMode ? 'text-sm' : 'text-base'} ${isAuthorMode ? 'text-white' : 'text-gray-800'}`}>
+              {(activeCharacter || character).name}
+            </h3>
+            <div className="flex items-center gap-1.5 mt-0.5">
               {isAuthorMode ? (
-                <span className={`${isMobileMode ? 'text-[10px]' : 'text-xs'} text-purple-400 font-medium flex items-center gap-0.5`}>
-                  <Wand2 size={isMobileMode ? 8 : 10} /> 作者模式
+                <span className={`${isMobileMode ? 'text-[10px]' : 'text-xs'} text-purple-400 font-bold flex items-center gap-1 bg-purple-900/20 px-1.5 py-0.5 rounded`}>
+                  <Wand2 size={isMobileMode ? 10 : 12} /> 作者模式
                 </span>
               ) : (
-                <>
-                  <HeartIcon filled />
-                  <span className={`${isMobileMode ? 'text-[10px]' : 'text-xs'} text-sherry-500 font-medium`}>
+                <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-0.5">
+                    {[1, 2, 3].map(i => (
+                      <HeartIcon key={i} filled={i <= 2} />
+                    ))}
+                  </div>
+                  <span className={`${isMobileMode ? 'text-[10px]' : 'text-xs'} text-sherry-500 font-bold`}>
                     {characterIntimacy[(activeCharacter || character).id]?.currentStatus || '初次相遇'}
                   </span>
-                </>
+                </div>
               )}
             </div>
           </div>
         </div>
         
-        <button 
-          onClick={() => setIsAuthorMode(!isAuthorMode)}
-          className={`${isMobileMode ? 'p-1' : 'p-1.5'} rounded-full transition-colors ${isAuthorMode ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-400 hover:text-purple-600'}`}
-        >
-          <Wand2 size={isMobileMode ? 12 : 16} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => setIsAuthorMode(!isAuthorMode)}
+            className={`
+              flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all text-xs font-bold
+              ${isAuthorMode 
+                ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/30' 
+                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}
+            `}
+          >
+            <Wand2 size={14} />
+            {!isMobileMode && <span>{isAuthorMode ? '退出创作' : '开始创作'}</span>}
+          </button>
+        </div>
       </div>
 
       {/* Input Area */}
-      <div className={`${isMobileMode ? 'px-3 py-2' : 'px-6 py-3'} border-t flex items-center gap-2 transition-colors ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+      <div className={`
+        ${isMobileMode ? 'px-4 py-3 pb-6' : 'px-8 py-4'} 
+        border-t flex items-center gap-3 transition-colors z-20
+        ${isAuthorMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}
+      `}>
         {!isAuthorMode && (
-          <button className="text-gray-400 hover:text-gray-600">
-            <Mic size={isMobileMode ? 16 : 20} />
+          <button className={`p-2 rounded-full transition-colors ${isAuthorMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}>
+            <Mic size={isMobileMode ? 20 : 24} />
           </button>
         )}
-        <div className={`flex-1 rounded-full ${isMobileMode ? 'px-3 py-1.5' : 'px-4 py-2'} flex items-center ${isAuthorMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+        
+        <div className={`
+          flex-1 rounded-2xl ${isMobileMode ? 'px-4 py-2.5' : 'px-6 py-3'} 
+          flex items-center transition-all focus-within:ring-2 focus-within:ring-sherry-200
+          ${isAuthorMode ? 'bg-gray-800' : 'bg-gray-100'}
+        `}>
           <input
             type="text"
-            placeholder={isAuthorMode ? "输入剧情旁白..." : "和TA说点什么..."}
-            className={`flex-1 bg-transparent border-none outline-none placeholder-gray-400 ${isMobileMode ? 'text-xs' : 'text-sm'} ${isAuthorMode ? 'text-white' : 'text-gray-700'}`}
+            placeholder={isAuthorMode ? "续写剧情或添加旁白..." : "输入你想说的话..."}
+            className={`
+              flex-1 bg-transparent border-none outline-none placeholder-gray-400
+              ${isMobileMode ? 'text-sm' : 'text-base'} 
+              ${isAuthorMode ? 'text-white' : 'text-gray-700'}
+            `}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           />
         </div>
+
         {!isAuthorMode && (
-          <button className="text-gray-400 hover:text-gray-600">
-            <Gift size={isMobileMode ? 16 : 20} />
+          <button className={`p-2 rounded-full transition-colors ${isAuthorMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}>
+            <Gift size={isMobileMode ? 20 : 24} />
           </button>
         )}
+        
         <button 
           onClick={handleSend}
           disabled={!inputValue.trim()}
-          className={`${isMobileMode ? 'p-1.5' : 'p-2'} rounded-full transition-colors ${
-            inputValue.trim() 
-              ? (isAuthorMode ? 'bg-purple-600 text-white' : 'bg-sherry-500 text-white shadow-md') 
-              : (isAuthorMode ? 'bg-gray-600 text-gray-400' : 'bg-gray-200 text-white')
-          }`}
+          className={`
+            p-3 rounded-2xl transition-all
+            ${inputValue.trim() 
+              ? (isAuthorMode 
+                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/30' 
+                  : 'bg-sherry-500 text-white shadow-lg shadow-sherry-200') 
+              : 'bg-gray-200 text-gray-400 cursor-not-allowed'}
+          `}
         >
-          <Send size={isMobileMode ? 14 : 18} />
+          <Send size={isMobileMode ? 18 : 22} />
         </button>
       </div>
 
