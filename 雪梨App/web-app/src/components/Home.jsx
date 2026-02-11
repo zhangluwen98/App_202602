@@ -19,9 +19,9 @@ export default function Home({ novels, onSelectStory, isMobileMode }) {
       </header>
 
       {/* Banner */}
-      <div className={isMobileMode ? 'px-4 pt-4 pb-2' : 'p-8'}>
-        <div className={`relative overflow-hidden bg-gradient-to-br from-sherry-400 via-sherry-500 to-orange-500 rounded-3xl text-white shadow-xl shadow-sherry-100 ${isMobileMode ? 'p-6 min-h-[160px]' : 'p-12'}`}>
-          <div className="relative z-10 flex flex-col justify-center h-full honor-flex-fix" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className={isMobileMode ? 'px-4 pt-4 pb-2 w-full' : 'p-8'}>
+        <div className={`relative overflow-hidden bg-gradient-to-br from-sherry-400 via-sherry-500 to-orange-500 rounded-3xl text-white shadow-xl shadow-sherry-100 ${isMobileMode ? 'p-6 min-h-[160px] w-full' : 'p-12'}`}>
+          <div className="relative z-10 flex flex-col justify-center h-full honor-flex-fix" style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
             <h2 className={`${isMobileMode ? 'text-2xl' : 'text-4xl'} font-black mb-2 tracking-tight`}>与故事相遇</h2>
             <p className={`${isMobileMode ? 'text-sm leading-relaxed' : 'text-lg'} opacity-90 font-medium max-w-[85%] mb-4`}>开启你的跨次元对话之旅，每一个选择都将改变命运</p>
             <div className="flex honor-flex-fix" style={{ display: 'flex' }}>
@@ -37,7 +37,7 @@ export default function Home({ novels, onSelectStory, isMobileMode }) {
       </div>
 
       {/* Section Title */}
-      <div className={`${isMobileMode ? 'px-4 py-4' : 'px-8 py-6'} flex items-center justify-between honor-flex-fix`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className={`${isMobileMode ? 'px-4 py-4' : 'px-8 py-6'} flex items-center justify-between honor-flex-fix w-full`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <h3 className={`${isMobileMode ? 'text-lg' : 'text-xl'} font-black text-gray-900 flex items-center gap-2 honor-flex-fix`} style={{ display: 'flex', alignItems: 'center' }}>
           <span className="w-1.5 h-6 bg-sherry-500 rounded-full"></span>
           热门推荐
@@ -47,6 +47,7 @@ export default function Home({ novels, onSelectStory, isMobileMode }) {
 
       {/* Story Grid */}
       <div className={`
+        w-full
         ${isMobileMode 
           ? 'grid grid-cols-1 gap-4 px-4' 
           : 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8'}
@@ -56,12 +57,12 @@ export default function Home({ novels, onSelectStory, isMobileMode }) {
             key={novel.id} 
             onClick={() => onSelectStory(novel.id)}
             className={`
-              group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 honor-flex-fix
-              ${isMobileMode ? 'flex h-40' : 'flex flex-col'}
+              group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 honor-flex-fix w-full
+              ${isMobileMode ? 'flex flex-row h-40' : 'flex flex-col'}
             `}
             style={{ display: 'flex', flexDirection: isMobileMode ? 'row' : 'column' }}
           >
-            <div className={`relative overflow-hidden flex-shrink-0 honor-avatar-fix ${isMobileMode ? 'w-32' : 'w-full aspect-[3/4]'}`}>
+            <div className={`relative overflow-hidden flex-shrink-0 honor-avatar-fix ${isMobileMode ? 'w-32 h-40' : 'w-full aspect-[3/4]'}`} style={isMobileMode ? { width: '128px', height: '160px' } : {}}>
               <img 
                 src={novel.cover} 
                 alt={novel.title} 

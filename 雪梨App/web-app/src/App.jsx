@@ -15,18 +15,20 @@ function App() {
     const checkMobile = () => {
       const userAgent = (navigator.userAgent || navigator.vendor || window.opera).toLowerCase();
       const mobileRegex = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
-      const isMobile = mobileRegex.test(userAgent);
+      const isMobile = mobileRegex.test(userAgent) || window.innerWidth <= 768;
       const isHonor = userAgent.includes('honor') || userAgent.includes('huawei') || userAgent.includes('magic');
       
       setIsRealMobile(isMobile);
       if (isMobile) {
         setIsMobileMode(true);
       }
-      if (isHonor) {
+      if (isHonor && isMobile) {
         setIsHonorSim(true);
       }
     };
     checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const handleSelectStory = (storyId) => {
@@ -40,26 +42,34 @@ function App() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen font-sans flex justify-center">
+    <div className="bg-gray-100 min-h-screen font-sans flex justify-center items-start overflow-x-hidden">
       {/* Main Container: Full width on mobile, limited on desktop in mobile mode */}
       <div className={`
-        ${(isMobileMode || isRealMobile) ? (isRealMobile ? 'w-full' : 'w-full max-w-md') : 'w-full max-w-6xl'} 
-        bg-white min-h-screen shadow-xl relative overflow-hidden flex flex-col transition-all duration-300
-        ${isHonorSim ? 'border-x-8 border-t-[30px] border-black rounded-[40px] mt-4 mb-4 h-[800px] min-h-0' : ''}
-      `}>
+        w-full 
+        ${isMobileMode ? (isRealMobile ? 'max-w-none' : 'max-w-md my-4 rounded-3xl') : 'max-w-6xl my-0 rounded-none'} 
+        bg-white min-h-screen shadow-2xl relative overflow-hidden flex flex-col transition-all duration-500
+        ${isHonorSim ? 'border-x-[10px] border-t-[35px] border-b-[15px] border-gray-900 rounded-[45px] mt-4 mb-8 h-[820px] min-h-0' : ''}
+      `} style={isHonorSim ? { height: '820px', maxHeight: '90vh' } : {}}>
         
         {/* Mock Status Bar for Honor Sim */}
         {isHonorSim && (
-          <div className="absolute top-0 left-0 w-full h-[30px] bg-black flex justify-between items-center px-8 z-[70]">
-            <span className="text-white text-[10px] font-bold">9:41</span>
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full border border-white/40"></div>
-              <div className="w-3 h-3 rounded-full bg-white"></div>
+          <div className="absolute top-0 left-0 w-full h-[35px] bg-gray-900 flex justify-between items-center px-8 z-[70]">
+            <span className="text-white text-[11px] font-bold">9:41</span>
+            <div className="flex gap-2 items-center">
+              <div className="flex gap-0.5">
+                <div className="w-0.5 h-1 bg-white/40"></div>
+                <div className="w-0.5 h-1.5 bg-white/40"></div>
+                <div className="w-0.5 h-2 bg-white"></div>
+                <div className="w-0.5 h-2.5 bg-white"></div>
+              </div>
+              <div className="w-5 h-2.5 rounded-[2px] border border-white/40 relative">
+                <div className="absolute left-0.5 top-0.5 bottom-0.5 right-1.5 bg-white rounded-[1px]"></div>
+              </div>
             </div>
           </div>
         )}
         {!isRealMobile && (
-          <div className="absolute top-4 right-4 z-[60] flex flex-col gap-2">
+          <div className="fixed top-6 right-6 z-[150] flex flex-col gap-3">
             <button 
               onClick={() => setIsMobileMode(!isMobileMode)}
               className="flex items-center gap-2 px-3 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all border border-gray-100 group"

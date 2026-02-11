@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Settings, Share2, Sparkles, Mic, Gift, Send, Wand2, Quote, BookOpen, X, ChevronRight, CheckCircle, Heart } from 'lucide-react';
+import { ArrowLeft, Settings, Share2, Sparkles, Send, BookOpen, X, Heart, Quote, CheckCircle, Gift, ChevronRight, Wand2, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NOVELS } from '../novels/index';
 
@@ -462,9 +462,9 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
   const character = story.characters[0];
 
   return (
-    <div className={`flex flex-col h-screen ${isAuthorMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`fixed inset-0 flex flex-col z-50 ${isAuthorMode ? 'bg-gray-900' : 'bg-gray-50'} ${isMobileMode ? 'w-full h-full' : ''}`} style={isMobileMode ? { width: '100vw', height: '100vh', left: 0, right: 0, top: 0, bottom: 0 } : {}}>
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between honor-flex-fix" style={{ minHeight: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className={`sticky top-0 z-30 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between honor-flex-fix ${isMobileMode ? 'w-full' : ''}`} style={{ minHeight: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <button onClick={onBack} className="p-2 -ml-2 text-gray-400 hover:text-gray-600 flex-shrink-0">
           <ArrowLeft size={24} />
         </button>
@@ -490,7 +490,7 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
       </div>
 
       {/* Chat Area */}
-      <div className={`flex-1 overflow-y-auto ${isMobileMode ? 'px-3 py-3 space-y-2' : 'px-6 py-6 space-y-4'} ${isAuthorMode ? 'bg-gray-900' : 'bg-transparent'}`}>
+      <div className={`flex-1 overflow-y-auto honor-flex-fix ${isMobileMode ? 'w-full px-3 py-3 space-y-2' : 'px-6 py-6 space-y-4'} ${isAuthorMode ? 'bg-gray-900' : 'bg-transparent'}`} style={{ display: 'flex', flexDirection: 'column' }}>
         {messages.map((msg) => (
           <motion.div
             key={msg.id}
@@ -799,7 +799,7 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
 
       {/* Character Info Bar */}
       <div className={`
-        ${isMobileMode ? 'px-4 py-3' : 'px-8 py-4'} 
+        ${isMobileMode ? 'w-full px-4 py-3' : 'px-8 py-4'} 
         border-t flex flex-row items-center justify-between transition-colors z-20 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] honor-flex-fix
         ${isAuthorMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}
       `} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -857,7 +857,7 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
 
       {/* Input Area */}
       <div className={`
-        ${isMobileMode ? 'px-4 py-3 pb-8 safe-pb' : 'px-8 py-4'} 
+        ${isMobileMode ? 'w-full px-4 py-3 pb-8 safe-pb' : 'px-8 py-4'} 
         border-t flex flex-row items-center transition-colors z-20 min-h-[72px] honor-flex-fix
         ${isAuthorMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}
       `} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -925,7 +925,7 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl w-full max-w-md max-h-[75vh] overflow-hidden shadow-2xl"
+              className={`bg-white rounded-2xl overflow-hidden shadow-2xl ${isMobileMode ? 'w-[92vw] max-h-[80vh]' : 'w-full max-w-md max-h-[75vh]'}`}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="px-4 py-3 border-b border-gray-100 flex flex-row items-center justify-between honor-flex-fix" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
