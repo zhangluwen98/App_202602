@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Mic, Image, Gift, Send, MoreHorizontal, Quote, Sparkles, Wand2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ArrowLeft, Mic, Gift, Send, Quote, Sparkles, Wand2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Chat({ character, onClose, initialContext }) {
@@ -108,45 +108,53 @@ export default function Chat({ character, onClose, initialContext }) {
       </div>
 
       {/* Messages Area */}
-      <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${isAuthorMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className={`flex-1 overflow-y-auto p-4 space-y-4 honor-flex-fix ${isAuthorMode ? 'bg-gray-900' : 'bg-gray-50'}`} style={{ display: 'flex', flexDirection: 'column' }}>
         {messages.map((msg) => (
           <motion.div
             key={msg.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={`flex honor-flex-fix ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            style={{ display: 'flex', justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start' }}
           >
             {/* System/Quote Message */}
             {msg.sender === 'system' ? (
-              <div className="w-full flex justify-center my-2">
+              <div className="w-full flex justify-center my-2 honor-flex-fix" style={{ display: 'flex', justifyContent: 'center' }}>
                 {msg.type === 'quote' ? (
-                  <div className="bg-white/80 border border-sherry-200 rounded-lg p-3 max-w-[85%] flex gap-2 text-sm text-gray-600 italic">
-                    <Quote size={16} className="text-sherry-400 flex-shrink-0" />
-                    <span>{msg.text}</span>
+                  <div className="bg-white/80 border border-sherry-200 rounded-lg p-3 max-w-[85%] flex gap-2 text-sm text-gray-600 italic honor-flex-fix" style={{ display: 'flex' }}>
+                    <Quote size={16} className="text-sherry-400 flex-shrink-0 honor-avatar-fix" style={{ flexShrink: 0 }} />
+                    <span className="word-break-all" style={{ wordBreak: 'break-word' }}>{msg.text}</span>
                   </div>
                 ) : (
                   // Author Action / Narrator
-                  <div className="bg-purple-50 border border-purple-200 text-purple-800 text-xs font-medium px-4 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
-                    <Sparkles size={12} />
-                    {msg.text}
+                  <div className="bg-purple-50 border border-purple-200 text-purple-800 text-xs font-medium px-4 py-1.5 rounded-full flex items-center gap-2 shadow-sm honor-flex-fix" style={{ display: 'flex', alignItems: 'center' }}>
+                    <Sparkles size={12} className="flex-shrink-0 honor-avatar-fix" style={{ flexShrink: 0 }} />
+                    <span className="word-break-all" style={{ wordBreak: 'break-word' }}>{msg.text}</span>
                   </div>
                 )}
               </div>
             ) : (
               // Normal Chat Message
-              <div className={`flex items-end max-w-[80%] gap-2 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+              <div 
+                className={`flex items-end max-w-[80%] gap-2 honor-flex-fix ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
+                style={{ display: 'flex', flexDirection: msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row', alignItems: 'flex-end' }}
+              >
                 {msg.sender === 'character' && (
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mb-1">
-                    <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                  <div 
+                    className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mb-1 honor-avatar-fix border border-gray-100 shadow-sm"
+                    style={{ width: '32px', height: '32px', flexShrink: 0 }}
+                  >
+                    <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover honor-avatar-fix" style={{ width: '100%', height: '100%', display: 'block' }} />
                   </div>
                 )}
                 
                 <div
-                  className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm
+                  className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm word-break-all honor-flex-fix
                     ${msg.sender === 'user' 
                       ? 'bg-sherry-500 text-white rounded-br-none' 
                       : 'bg-white text-gray-700 rounded-bl-none border border-gray-100'
                     }`}
+                  style={{ wordBreak: 'break-word', display: 'flex', flexDirection: 'column' }}
                 >
                   {msg.text}
                 </div>
@@ -156,15 +164,18 @@ export default function Chat({ character, onClose, initialContext }) {
         ))}
         
         {isTyping && (
-           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-             <div className="flex items-end gap-2">
-               <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mb-1">
-                  <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover" />
+           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start honor-flex-fix" style={{ display: 'flex', justifyContent: 'flex-start' }}>
+             <div className="flex items-end gap-2 honor-flex-fix" style={{ display: 'flex', alignItems: 'flex-end' }}>
+               <div 
+                 className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mb-1 honor-avatar-fix border border-gray-100 shadow-sm"
+                 style={{ width: '32px', height: '32px', flexShrink: 0 }}
+               >
+                  <img src={character.avatar} alt="Avatar" className="w-full h-full object-cover honor-avatar-fix" style={{ width: '100%', height: '100%', display: 'block' }} />
                 </div>
-                <div className="bg-white px-4 py-3 rounded-2xl rounded-bl-none border border-gray-100 shadow-sm flex gap-1">
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-75"></span>
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></span>
+                <div className="bg-white px-4 py-3 rounded-2xl rounded-bl-none border border-gray-100 shadow-sm flex gap-1 honor-flex-fix" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                  <span className="w-1.5 h-1.5 bg-sherry-300 rounded-full animate-bounce"></span>
+                  <span className="w-1.5 h-1.5 bg-sherry-400 rounded-full animate-bounce delay-75"></span>
+                  <span className="w-1.5 h-1.5 bg-sherry-500 rounded-full animate-bounce delay-150"></span>
                 </div>
              </div>
            </motion.div>
@@ -173,13 +184,13 @@ export default function Chat({ character, onClose, initialContext }) {
       </div>
 
       {/* Input Area */}
-      <div className={`px-4 py-3 border-t flex items-center gap-3 transition-colors ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+      <div className={`px-4 py-3 border-t flex items-center gap-3 transition-colors honor-flex-fix safe-pb ${isAuthorMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`} style={{ display: 'flex', alignItems: 'center' }}>
         {!isAuthorMode && (
-          <button className="text-gray-400 hover:text-gray-600">
+          <button className="text-gray-400 hover:text-gray-600 p-1">
             <Mic size={24} />
           </button>
         )}
-        <div className={`flex-1 rounded-full px-4 py-2 flex items-center ${isAuthorMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+        <div className={`flex-1 rounded-full px-4 py-2 flex items-center honor-flex-fix ${isAuthorMode ? 'bg-gray-700' : 'bg-gray-100'}`} style={{ display: 'flex', alignItems: 'center' }}>
           <input
             type="text"
             placeholder={isAuthorMode ? "输入剧情旁白或系统指令..." : "和TA说点什么..."}
@@ -187,21 +198,23 @@ export default function Chat({ character, onClose, initialContext }) {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            style={{ width: '100%' }}
           />
         </div>
         {!isAuthorMode && (
-          <button className="text-gray-400 hover:text-gray-600">
+          <button className="text-gray-400 hover:text-gray-600 p-1">
              <Gift size={24} />
           </button>
         )}
         <button 
           onClick={handleSend}
           disabled={!inputValue.trim()}
-          className={`p-2 rounded-full transition-colors ${
+          className={`p-2 rounded-full transition-colors flex-shrink-0 ${
             inputValue.trim() 
               ? (isAuthorMode ? 'bg-purple-600 text-white' : 'bg-sherry-500 text-white shadow-md') 
               : (isAuthorMode ? 'bg-gray-600 text-gray-400' : 'bg-gray-200 text-white')
           }`}
+          style={{ flexShrink: 0 }}
         >
           <Send size={20} />
         </button>

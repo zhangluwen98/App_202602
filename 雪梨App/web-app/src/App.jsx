@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Home from './components/Home';
 import ImmersiveReader from './components/ImmersiveReader';
 import { NOVELS } from './novels/index';
@@ -88,26 +88,26 @@ function App() {
         )}
         
         {view === 'home' && (
-          <>
-            <div className="flex-1 overflow-y-auto no-scrollbar">
+          <div className="flex flex-col h-full overflow-hidden honor-flex-fix" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <div className="flex-1 overflow-y-auto no-scrollbar pb-16">
               <Home novels={NOVELS} onSelectStory={handleSelectStory} isMobileMode={isMobileMode || isRealMobile} />
             </div>
             
-            <div className="h-14 bg-white border-t border-gray-100 flex flex-row justify-around items-center absolute bottom-0 w-full z-10">
-              <div className="flex flex-col items-center text-sherry-500 cursor-pointer">
-                <HomeIcon size={18} />
-                <span className="text-[9px] font-medium" style={{ marginTop: '2px' }}>首页</span>
+            <div className="h-16 bg-white border-t border-gray-100 flex flex-row justify-around items-center fixed bottom-0 left-0 right-0 w-full z-[100] safe-pb honor-flex-fix" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', position: isRealMobile ? 'fixed' : 'absolute' }}>
+              <div className="flex flex-col items-center text-sherry-500 cursor-pointer py-1 px-4">
+                <HomeIcon size={20} />
+                <span className="text-[10px] font-bold mt-1">首页</span>
               </div>
-              <div className="flex flex-col items-center text-gray-400 cursor-pointer hover:text-gray-600 transition-colors">
-                <Book size={18} />
-                <span className="text-[9px] font-medium" style={{ marginTop: '2px' }}>书架</span>
+              <div className="flex flex-col items-center text-gray-400 cursor-pointer hover:text-gray-600 transition-colors py-1 px-4">
+                <Book size={20} />
+                <span className="text-[10px] font-medium mt-1">书架</span>
               </div>
-              <div className="flex flex-col items-center text-gray-400 cursor-pointer hover:text-gray-600 transition-colors">
-                <User size={18} />
-                <span className="text-[9px] font-medium" style={{ marginTop: '2px' }}>我的</span>
+              <div className="flex flex-col items-center text-gray-400 cursor-pointer hover:text-gray-600 transition-colors py-1 px-4">
+                <User size={20} />
+                <span className="text-[10px] font-medium mt-1">我的</span>
               </div>
             </div>
-          </>
+          </div>
         )}
 
         {view === 'reader' && selectedStoryId && (
