@@ -16,8 +16,25 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         [x-cloak] { display: none !important; }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(-5%); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
+            50% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+        }
+        .animate-bounce-slow { animation: bounce-slow 2s infinite; }
+        .choice-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        .discovery-transition { transition: all 1s ease-in-out; }
+        .discovery-unlocked { filter: grayscale(0) scale(1); }
+        .discovery-locked { filter: grayscale(1) scale(0.9); opacity: 0.7; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
+        }
     </style>
     <script>
+        // SAFETY-NET: 初始化调试中心
+        window.__debugLog = [];
+        window.__testHooks = {};
+        
         tailwind.config = {
             theme: {
                 extend: {
@@ -31,9 +48,522 @@
                 }
             }
         }
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('app', () => ({
+                view: 'home', 
+                showDirectory: false, 
+                novels: [], 
+                currentNovel: null,
+                messages: [],
+                isAuthorMode: false,
+                currentChapterIndex: 0,
+                currentParagraphIndex: 0,
+                unlockedChapters: [0],
+                showIntimacyChange: null,
+                intimacyData: {}, // FIX-A: 好感度数据中心
+                intimacyQueue: [], // FIX-A: UI 变更通知队列
+                isIntimacyProcessing: false, // FIX-A: 队列处理锁
+                showDiscoveryEffect: false,
+                discoveryCharacter: null,
+                activeCharacterId: null,
+                showCharacterSelector: false,
+                inputValue: '',
+                isTyping: false,
+                currentChoices: [],
+                paragraphQueue: [],
+                discoveredCount: 0,
+                activeTimers: [],
+                showChapterEndCard: false, // 恢复为显式变量
+                get readingProgress() {
+                    if (!this.currentNovel || !this.currentNovel.chapters[this.currentChapterIndex]) return 0;
+                    const chapter = this.currentNovel.chapters[this.currentChapterIndex];
+                    return Math.min(100, Math.round((this.currentParagraphIndex / chapter.paragraphs.length) * 100));
+                },
+                async init() {
+                    try {
+                        const response = await fetch('http://localhost:3001/api/novels');
+                        this.novels = await response.json();
+                        lucide.createIcons();
+                        this._injectTestHooks(); // SAFETY-NET
+                    } catch (e) {
+                        console.error('Failed to fetch novels:', e);
+                    }
+                },
+                async openReader(novelId) {
+                    this.clearAllTimers(); // 进入阅读器前先清理
+                    try {
+                        const response = await fetch(`http://localhost:3001/api/novels/${novelId}`);
+                        this.currentNovel = await response.json();
+                        // 初始化角色发现状态
+                        this.currentNovel.characters.forEach(c => {
+                            if (c.isDiscovered === undefined) c.isDiscovered = true;
+                        });
+                        this.activeCharacterId = this.currentNovel.characters[0]?.id;
+                        this.view = 'reader';
+                        this.initializeChapter(0);
+                        this.$nextTick(() => {
+                            lucide.createIcons();
+                            this.scrollToBottom();
+                        });
+                    } catch (e) {
+                        console.error('Failed to fetch novel detail:', e);
+                    }
+                },
+                get activeCharacter() {
+                    return this.currentNovel?.characters.find(c => c.id === this.activeCharacterId);
+                },
+                getCharacterAvatar(speaker) {
+                    const char = this.currentNovel?.characters.find(c => c.name === speaker || c.id === speaker);
+                    if (!char) return 'https://api.dicebear.com/7.x/avataaars/svg?seed=unknown';
+                    return char.avatar;
+                },
+                getCharacterClass(speaker) {
+                    const char = this.currentNovel?.characters.find(c => c.name === speaker || c.id === speaker);
+                    if (!char) return '';
+                    return char.isDiscovered ? 'discovery-unlocked' : 'discovery-locked';
+                },
+                getCharacterName(speaker) {
+                    const char = this.currentNovel?.characters.find(c => c.name === speaker || c.id === speaker);
+                    if (!char) return speaker;
+                    return char.isDiscovered ? char.name : '???';
+                },
+                switchCharacter(id) {
+                    this.activeCharacterId = id;
+                    this.showCharacterSelector = false;
+                    this.uiUpdate();
+                },
+                // FIX-A-START
+                /**
+                 * 副作用声明：
+                 * 1. 修改状态变量：activeTimers
+                 * 2. 影响读取函数：所有异步回调执行前的有效性检查
+                 * 3. 同步更新：无直接 UI 绑定，但影响剧情推进的原子性
+                 */
+                registerTimer(callback, delay) {
+                    const timerId = setTimeout(() => {
+                        // 执行前回写：确保该定时器未被清理
+                        if (this.activeTimers.includes(timerId)) {
+                            callback();
+                            this.activeTimers = this.activeTimers.filter(t => t !== timerId);
+                        }
+                    }, delay);
+                    this.activeTimers = [...this.activeTimers, timerId];
+                    return timerId;
+                },
+                clearAllTimers() {
+                    this.activeTimers.forEach(t => clearTimeout(t));
+                    this.activeTimers = [];
+                    this._logChange('activeTimers', 0, 'clearAllTimers');
+                },
+                // FIX-A-END
+                // FIX-C-START
+                /**
+                 * 副作用声明：
+                 * 1. 修改状态变量：无
+                 * 2. 影响读取函数：DOM 树（Lucide 图标渲染容器）
+                 * 3. 同步更新：自动滚动到底部 + 重新扫描并绘制 Lucide 图标
+                 */
+                uiUpdate() {
+                    this.$nextTick(() => {
+                        // 1. 确保滚动位置正确
+                        this.scrollToBottom();
+                        // 2. 重新初始化图标（解决动态 DOM 断层）
+                        if (typeof lucide !== 'undefined') {
+                            lucide.createIcons();
+                        }
+                    });
+                },
+                // FIX-C-END
+                // SAFETY-NET: 状态访问代理与变更日志
+                _logChange(prop, val, source) {
+                    const entry = { timestamp: new Date().toISOString(), prop, val, source };
+                    window.__debugLog.push(entry);
+                    if (window.__debugLog.length > 100) window.__debugLog.shift();
+                },
+                setIsTyping(val, source = 'unknown') {
+                    this.isTyping = !!val;
+                    this._logChange('isTyping', this.isTyping, source);
+                    // FIX-C-START
+                    this.uiUpdate(); 
+                    // FIX-C-END
+                },
+                setCurrentParagraphIndex(val, source = 'unknown') {
+                    const max = this.currentNovel?.chapters[this.currentChapterIndex]?.paragraphs?.length || 999;
+                    this.currentParagraphIndex = Math.max(0, Math.min(val, max));
+                    this._logChange('currentParagraphIndex', this.currentParagraphIndex, source);
+                },
+                setCurrentChoices(val, source = 'unknown') {
+                    this.currentChoices = val || [];
+                    this._logChange('currentChoices', this.currentChoices.length, source);
+                    // FIX-C-START
+                    this.uiUpdate();
+                    // FIX-C-END
+                },
+                // FIX-A-START
+                /**
+                 * 副作用声明：
+                 * 1. 修改状态变量：intimacyData, intimacyQueue, showIntimacyChange, isIntimacyProcessing
+                 * 2. 影响读取函数：UI 渲染层对 showIntimacyChange 的订阅
+                 * 3. 同步更新：顶部/全局亲密度显示组件（如有）
+                 */
+                updateIntimacy(characterName, newStatus, source = 'unknown') {
+                    // 1. 状态归集：记录到数据中心
+                    this.intimacyData[characterName] = newStatus;
+                    this._logChange(`intimacyData.${characterName}`, newStatus, source);
+
+                    // 同步更新小说原始数据中的 currentStatus，以便基于规则的检测
+                    const char = this.currentNovel.characters.find(c => c.name === characterName || c.id === characterName);
+                    if (char && char.intimacy) {
+                        char.intimacy.currentStatus = newStatus;
+                    }
+
+                    // 2. 进入 UI 队列
+                    this.intimacyQueue = [...this.intimacyQueue, { characterName, newStatus }];
+                    
+                    // 3. 触发队列处理
+                    this.processIntimacyQueue();
+                },
+                // 基于规则检查并更新好感度
+                 checkIntimacyRules(type, id, value = null) {
+                     this.currentNovel.characters.forEach(char => {
+                         if (!char.intimacy || !char.intimacy.upgradePath) return;
+ 
+                         // 获取当前状态索引
+                         const currentIdx = char.intimacy.upgradePath.findIndex(p => p.status === char.intimacy.currentStatus);
+                         
+                         // 检查所有尚未达到的等级，支持跨级触发
+                         for (let i = currentIdx + 1; i < char.intimacy.upgradePath.length; i++) {
+                             const targetPath = char.intimacy.upgradePath[i];
+                             if (!targetPath.condition) continue;
+
+                             const cond = targetPath.condition;
+                             let triggered = false;
+
+                             if (cond.type === type) {
+                                 if (type === 'choice' && cond.id === id) triggered = true;
+                                 if (type === 'event' && cond.id === id) triggered = true;
+                                 if (type === 'interaction_count') {
+                                     const interactionCount = this.messages.filter(m => m.characterId === 'protagonist').length;
+                                     if (interactionCount >= cond.value) triggered = true;
+                                 }
+                             }
+
+                             if (triggered) {
+                                 this.updateIntimacy(char.name, targetPath.status, `rule_trigger_${type}_${id || ''}`);
+                                 // 注意：此处不 break，因为可能一次操作触发多个角色的规则，
+                                 // 但对于同一个角色，我们通常只希望触发它能达到的最高等级
+                             }
+                         }
+                     });
+                 },
+                processIntimacyQueue() {
+                    if (this.isIntimacyProcessing || this.intimacyQueue.length === 0) return;
+
+                    this.isIntimacyProcessing = true;
+                    const nextChange = this.intimacyQueue[0];
+                    this.intimacyQueue = this.intimacyQueue.slice(1);
+                    
+                    // 弹出 UI 提示
+                    this.showIntimacyChange = nextChange;
+                    
+                    // 3秒后清理并处理下一个
+                    this.registerTimer(() => {
+                        this.showIntimacyChange = null;
+                        this.isIntimacyProcessing = false;
+                        this.processIntimacyQueue();
+                    }, 3000);
+                },
+                // FIX-A-END
+                // SAFETY-NET: 冒烟测试桩
+                _injectTestHooks() {
+                    window.__testHooks = {
+                        testNormalChoiceFlow: () => {
+                            return {
+                                isTyping: this.isTyping,
+                                currentParagraphIndex: this.currentParagraphIndex,
+                                showChapterEndCard: this.showChapterEndCard,
+                                messageCount: this.messages.length,
+                                choicesCount: this.currentChoices.length
+                            };
+                        },
+                        testRapidClick: async () => {
+                            const results = [];
+                            for (let i = 0; i < 3; i++) {
+                                this.loadNextParagraph();
+                                results.push(this.isTyping);
+                                await new Promise(r => setTimeout(r, 200));
+                            }
+                            return results;
+                        },
+                        testIntimacyConcurrency: async () => {
+                            // 模拟瞬间产生3个好感度变更
+                            this.updateIntimacy('角色A', '好感+1', 'test');
+                            this.updateIntimacy('角色B', '好感+2', 'test');
+                            this.updateIntimacy('角色C', '好感+3', 'test');
+                            return {
+                                queueLength: this.intimacyQueue.length,
+                                isProcessing: this.isIntimacyProcessing,
+                                currentUI: this.showIntimacyChange?.characterName
+                            };
+                        },
+                        testChapterEndLogic: () => {
+                            const chapter = this.currentNovel.chapters[this.currentChapterIndex];
+                            return {
+                                paragraphIndex: this.currentParagraphIndex,
+                                totalParagraphs: chapter.paragraphs.length,
+                                queueLength: this.paragraphQueue.length,
+                                choicesCount: this.currentChoices.length,
+                                showEndCard: this.showChapterEndCard
+                            };
+                        },
+                        testLucideSync: () => {
+                            // 模拟动态内容插入并触发更新
+                            this.messages.push({id: 'test-icon', type: 'story', text: '图标测试 <i data-lucide="heart"></i>'});
+                            this.uiUpdate();
+                            return "UI update triggered for icon rendering";
+                        },
+                        testChapterTransition: async () => {
+                            const results = [];
+                            // 模拟从第0章跳转到第1章
+                            this.loadNextChapter();
+                            results.push({ stage: 'initial', chapter: this.currentChapterIndex, isTyping: this.isTyping });
+                            
+                            // 等待 initializeChapter 的 50ms 延迟
+                            await new Promise(r => setTimeout(r, 100));
+                            results.push({ stage: 'after_50ms', msgCount: this.messages.length, currentPara: this.currentParagraphIndex });
+                            
+                            return results;
+                        },
+                        testFullRegression: async () => {
+                            const results = {};
+                            results.state = this.testNormalChoiceFlow();
+                            results.intimacy = await this.testIntimacyConcurrency();
+                            results.chapterEnd = this.testChapterEndLogic();
+                            results.timerRegistry = { count: this.activeTimers.length };
+                            return results;
+                        }
+                    };
+                },
+                // FIX-D-START
+                /**
+                 * 修复 D：章节初始化原子性
+                 * 修改状态：currentChapterIndex, currentParagraphIndex, paragraphQueue, currentChoices, isTyping, showChapterEndCard
+                 * 影响读取：checkChapterStatus, loadNextParagraph, UI 渲染
+                 */
+                initializeChapter(index) {
+                    this.clearAllTimers(); 
+                    this.isTyping = true; 
+                    this.showChapterEndCard = false; // 显式重置状态
+                    
+                    this.paragraphQueue = [];
+                    this.currentParagraphIndex = 0; 
+                    this.currentChoices = [];
+                    this.currentChapterIndex = index;
+                
+                    const chapter = this.currentNovel.chapters[index];
+                    if (!chapter) {
+                        this.isTyping = false;
+                        return;
+                    }
+                
+                    this.messages = [
+                        { id: 'title-' + Date.now(), type: 'story', text: chapter.title, isTitle: true }
+                    ];
+                
+                    this.registerTimer(() => {
+                        this.loadNextParagraph();
+                        this.$nextTick(() => {
+                            this.setIsTyping(false, 'initializeChapter');
+                            this.uiUpdate();
+                        });
+                        
+                        if (chapter.initialMessage) {
+                            this.registerTimer(() => {
+                                this.messages = [...this.messages, {
+                                    id: 'init-' + Date.now(),
+                                    type: 'dialogue',
+                                    characterId: this.currentNovel.characters[0].id,
+                                    text: chapter.initialMessage
+                                }];
+                                this.uiUpdate();
+                            }, 800);
+                        }
+                    }, 50);
+                },
+
+                loadNextParagraph() {
+                    if (this.isTyping) return;
+                    
+                    const chapter = this.currentNovel.chapters[this.currentChapterIndex];
+                    if (!chapter) return;
+
+                    // 处理排队中的段落
+                    if (this.paragraphQueue.length > 0) {
+                        const paraId = this.paragraphQueue[0];
+                        this.paragraphQueue = this.paragraphQueue.slice(1);
+                        const p = (chapter.extendedParagraphs || []).find(ep => ep.id === paraId) || 
+                                  (chapter.paragraphs || []).find(pp => pp.id === paraId);
+                        if (p) {
+                            this.displayParagraph(p);
+                            return;
+                        }
+                    }
+
+                    // 处理线性剧情
+                    if (this.currentParagraphIndex < chapter.paragraphs.length) {
+                        const p = chapter.paragraphs[this.currentParagraphIndex];
+                        this.currentParagraphIndex++;
+                        this.displayParagraph(p);
+                        
+                        // 如果这是最后一段，且没有后续选项，则在下一次点击时触发结束卡片
+                        return;
+                    }
+
+                    // 如果已经没有段落且没有选项，显示结束卡片
+                    if (this.currentChoices.length === 0) {
+                        this.showChapterEndCard = true;
+                        this.uiUpdate();
+                    }
+                },
+                displayParagraph(p) {
+                    this.messages = [...this.messages, {
+                        id: p.id + '-' + Date.now(), // 确保 ID 唯一，防止切换章节时冲突
+                        type: 'story',
+                        parts: p.parts,
+                        paragraphId: p.id
+                    }];
+                    
+                    this.setCurrentChoices(p.choices || [], 'displayParagraph'); // SAFETY-NET
+                    
+                    p.parts.forEach(part => {
+                        if (part.type === 'dialogue') {
+                            this.checkCharacterDiscovery(part.speaker);
+                        }
+                    });
+                    
+                    this.uiUpdate();
+                },
+                loadNextChapter() {
+                    // 防止连点导致重复初始化
+                    if (this.isTyping || this.activeTimers.length > 5) return; 
+                    
+                    if (this.currentChapterIndex < this.currentNovel.chapters.length - 1) {
+                        const nextIndex = this.currentChapterIndex + 1;
+                        if (!this.unlockedChapters.includes(nextIndex)) {
+                            this.unlockedChapters = [...this.unlockedChapters, nextIndex];
+                        }
+                        this.initializeChapter(nextIndex);
+                    }
+                },
+                handleChoice(choice) {
+                    if (this.isTyping) return; // 防止连点
+                    this.setCurrentChoices([], 'handleChoice'); // SAFETY-NET
+                    this.messages = [...this.messages, {
+                        id: 'choice-' + Date.now(),
+                        type: 'dialogue',
+                        characterId: 'protagonist',
+                        text: choice.text
+                    }];
+                    this.setIsTyping(true, 'handleChoice'); // SAFETY-NET
+                    this.uiUpdate();
+
+                    this.registerTimer(() => {
+                        if (choice.nextParagraphs) {
+                            this.paragraphQueue = [...choice.nextParagraphs];
+                        }
+                        this.setIsTyping(false, 'handleChoice_callback'); // SAFETY-NET
+                        this.loadNextParagraph();
+                        
+                        // 触发基于选项的好感度规则检查
+                        this.checkIntimacyRules('choice', choice.id);
+                    }, 1000);
+                },
+                checkCharacterDiscovery(speaker) {
+                    const char = this.currentNovel.characters.find(c => c.name === speaker || c.id === speaker);
+                    if (char && !char.isDiscovered) {
+                        char.isDiscovered = true;
+                        this.discoveredCount++;
+                        this.triggerDiscovery(char);
+                    }
+                },
+                triggerDiscovery(character) {
+                    this.discoveryCharacter = character;
+                    this.showDiscoveryEffect = true;
+                    
+                    // 触发基于事件的好感度规则检查 (如：解锁艾莉亚)
+                    this.checkIntimacyRules('event', 'discovery_' + character.id);
+                    this.checkIntimacyRules('event', 'discovery_' + character.name);
+
+                    this.registerTimer(() => {
+                        this.showDiscoveryEffect = false;
+                    }, 3000);
+                },
+                handleSend(text) {
+                    if (!text || !text.trim() || this.isTyping) return;
+                    const trimmedText = text.trim();
+                    this.messages = [...this.messages, {
+                        id: 'user-' + Date.now(),
+                        type: 'dialogue',
+                        characterId: 'protagonist',
+                        text: trimmedText
+                    }];
+                    this.setIsTyping(true, 'handleSend'); // SAFETY-NET: 开始 AI 思考流程
+                    this.uiUpdate();
+
+                    // 触发基于交互次数的好感度规则检查
+                    this.checkIntimacyRules('interaction_count');
+                    
+                    const chapter = this.currentNovel.chapters[this.currentChapterIndex];
+                    const currentParaId = this.messages.filter(m => m.type === 'story').pop()?.paragraphId;
+                    const trigger = chapter.dialogueTriggers?.find(t => t.paragraphId === currentParaId && t.condition === 'user_interacted');
+                    
+                    if (trigger) {
+                        this.registerTimer(() => {
+                            if (trigger.targetParagraph) {
+                                this.paragraphQueue = [trigger.targetParagraph];
+                            } else {
+                                this.paragraphQueue = [...trigger.nextParagraphs];
+                            }
+                            this.setIsTyping(false, 'handleSend_trigger'); // SAFETY-NET
+                            this.loadNextParagraph();
+                        }, 1500);
+                    } else {
+                        this.registerTimer(() => {
+                            const activeChar = this.activeCharacter;
+                            let personaPrefix = "";
+                            if (activeChar && activeChar.persona) {
+                                const traits = activeChar.persona.split(/[，。、]/);
+                                personaPrefix = traits.length > 0 ? `（${traits[0]}地）` : "";
+                            }
+                            this.messages = [...this.messages, {
+                                id: 'ai-' + Date.now(),
+                                type: 'dialogue',
+                                characterId: this.activeCharacterId,
+                                text: activeChar ? `${personaPrefix}${activeChar.name}思考了一会儿：你说得很有道理，我会考虑的。` : '（系统检测到干扰，信号正在恢复...）'
+                            }];
+                            if (Math.random() > 0.7) {
+                                // 随机触发已弃用，现在由 checkIntimacyRules 统一管理规则
+                            }
+                            this.setIsTyping(false, 'handleSend_aiResponse'); // SAFETY-NET
+                            this.uiUpdate();
+                        }, 1000);
+                    }
+                },
+                scrollToBottom() {
+                    const container = document.getElementById('chat-container');
+                    if (container) {
+                        container.scrollTo({
+                            top: container.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            }))
+        })
     </script>
 </head>
-<body class="bg-gray-50 text-gray-900 overflow-x-hidden" x-data="{ view: 'home', showDirectory: false }">
+<body class="bg-gray-50 text-gray-900 overflow-x-hidden" x-data="app">
     <div x-show="view === 'home'" x-transition class="flex flex-col min-h-screen">
         <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex items-center justify-between">
             <h1 class="text-xl font-black text-sherry-500 tracking-tighter">雪梨App</h1>
@@ -59,26 +589,27 @@
                     <span class="text-xs text-gray-400 font-bold">查看全部 <i data-lucide="chevron-right" class="inline w-3 h-3"></i></span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-                    <template x-for="i in [1,2,3,4]" :key="i">
-                        <div @click="view = 'reader'" class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 flex flex-row md:flex-col h-32 md:h-auto cursor-pointer">
+                    <template x-for="novel in novels" :key="novel.id">
+                        <div @click="openReader(novel.id)" class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 flex flex-row md:flex-col h-32 md:h-auto cursor-pointer">
                             <div class="w-24 md:w-full aspect-[3/4] flex-shrink-0 relative overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                <div class="absolute top-2 left-2 bg-sherry-500/90 text-white text-[9px] px-2 py-0.5 rounded-full font-bold">连载中</div>
+                                <img :src="novel.cover" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <div class="absolute top-2 left-2 bg-sherry-500/90 text-white text-[9px] px-2 py-0.5 rounded-full font-bold" x-text="novel.status"></div>
                             </div>
                             <div class="flex-1 p-3 md:p-5 flex flex-col justify-between min-w-0">
                                 <div class="min-w-0">
-                                    <h4 class="font-black text-gray-900 group-hover:text-sherry-500 transition-colors truncate text-sm md:text-lg">赛博纪元：深海之网</h4>
-                                    <p class="text-[10px] md:text-xs text-gray-400 mt-1 font-bold italic truncate">@ 艾萨克·阿西莫夫</p>
-                                    <p class="text-[10px] md:text-sm text-gray-500 mt-2 line-clamp-2 leading-relaxed word-break-all">在一个数字灵魂可以被交易的世界，一位黑客发现了一个足以改变人类定义的秘密...</p>
+                                    <h4 class="font-black text-gray-900 group-hover:text-sherry-500 transition-colors truncate text-sm md:text-lg" x-text="novel.title"></h4>
+                                    <p class="text-[10px] md:text-xs text-gray-400 mt-1 font-bold italic truncate" x-text="'@ ' + novel.author"></p>
+                                    <p class="text-[10px] md:text-sm text-gray-500 mt-2 line-clamp-2 leading-relaxed word-break-all" x-text="novel.description"></p>
                                 </div>
                                 <div class="flex items-center justify-between mt-2">
                                     <div class="flex gap-1">
-                                        <span class="text-[9px] md:text-xs bg-gray-50 text-gray-500 font-bold px-1.5 py-0.5 rounded border border-gray-100">科幻</span>
-                                        <span class="text-[9px] md:text-xs bg-gray-50 text-gray-500 font-bold px-1.5 py-0.5 rounded border border-gray-100">硬核</span>
+                                        <template x-for="tag in novel.tags" :key="tag">
+                                            <span class="text-[9px] md:text-xs bg-gray-50 text-gray-500 font-bold px-1.5 py-0.5 rounded border border-gray-100" x-text="tag"></span>
+                                        </template>
                                     </div>
                                     <div class="flex items-center gap-1 text-sherry-500">
                                         <i data-lucide="heart" class="w-3 h-3 fill-current"></i>
-                                        <span class="text-[10px] font-black">9.8</span>
+                                        <span class="text-[10px] font-black" x-text="novel.rating"></span>
                                     </div>
                                 </div>
                             </div>
@@ -102,84 +633,283 @@
             </div>
         </nav>
     </div>
-    <div x-show="view === 'reader'" x-cloak class="fixed inset-0 bg-white z-50 flex flex-col" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
-        <header class="sticky top-0 z-30 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between min-h-[64px]">
-            <button @click="view = 'home'" class="p-2 -ml-2 text-gray-400 hover:text-gray-600 min-h-12 min-w-12 flex items-center justify-center">
-                <i data-lucide="arrow-left" class="w-6 h-6"></i>
-            </button>
-            <div class="flex-1 text-center min-w-0 px-2">
-                <h2 class="font-black text-gray-900 truncate text-sm">星际穿越：最后的玫瑰</h2>
-                <div class="flex items-center justify-center gap-1 mt-0.5">
-                    <span class="w-1 h-1 bg-sherry-400 rounded-full"></span>
-                    <p class="text-[10px] text-gray-400 font-bold truncate">第一章：寂静的引力</p>
+    <div x-show="view === 'reader' && currentNovel" x-cloak class="fixed inset-0 z-50 bg-white flex flex-col overflow-hidden" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+        <!-- 全局进度条 -->
+        <div class="fixed top-0 left-0 right-0 h-1 bg-gray-100 z-[100] overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-sherry-400 to-sherry-600 transition-all duration-500 shadow-[0_0_8px_rgba(236,72,153,0.5)]" :style="`width: ${readingProgress}%` shadow-sm"></div>
+        </div>
+
+        <!-- 身份解密特效层 -->
+        <div x-show="showDiscoveryEffect" x-cloak x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" class="fixed inset-0 z-[200] flex items-center justify-center pointer-events-none p-6">
+            <div class="bg-white/90 backdrop-blur-xl p-8 rounded-[40px] shadow-2xl border-4 border-sherry-100 flex flex-col items-center gap-6 animate-bounce-slow">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-sherry-400 blur-2xl opacity-20 animate-pulse"></div>
+                    <img :src="discoveryCharacter?.avatar" class="w-32 h-32 rounded-3xl border-4 border-white shadow-lg relative z-10">
+                </div>
+                <div class="text-center">
+                    <p class="text-sherry-600 font-black text-xs uppercase tracking-widest mb-1">身份解密</p>
+                    <h2 class="text-3xl font-black text-gray-900" x-text="discoveryCharacter?.name"></h2>
+                </div>
+                <div class="px-6 py-2 bg-sherry-500 text-white rounded-full text-sm font-black shadow-lg shadow-sherry-500/30">
+                    新伙伴已解锁！
                 </div>
             </div>
-            <div class="flex items-center">
-                <button @click="showDirectory = true" class="p-2 text-gray-400 min-h-12 min-w-12 flex items-center justify-center">
-                    <i data-lucide="book-open" class="w-5 h-5"></i>
+        </div>
+
+        <header class="sticky top-0 z-30 bg-white border-b border-gray-100 px-4 py-3 flex flex-col min-h-[64px]">
+            <div class="flex items-center justify-between w-full">
+                <button @click="view = 'home'" class="p-2 -ml-2 text-gray-400 hover:text-gray-600 min-h-12 min-w-12 flex items-center justify-center">
+                    <i data-lucide="arrow-left" class="w-6 h-6"></i>
                 </button>
-                <button class="p-2 text-gray-400 min-h-12 min-w-12 flex items-center justify-center">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
-                </button>
+                <div class="flex-1 text-center min-w-0 px-2">
+                    <h2 class="font-black text-gray-900 truncate text-sm" x-text="currentNovel.title"></h2>
+                    <div class="flex items-center justify-center gap-1 mt-0.5">
+                        <span class="w-1 h-1 bg-sherry-400 rounded-full"></span>
+                        <p class="text-[10px] text-gray-400 font-bold truncate" x-text="currentNovel.chapters[currentChapterIndex].title"></p>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <button @click="showDirectory = true" class="p-2 text-gray-400 min-h-12 min-w-12 flex items-center justify-center">
+                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                    </button>
+                    <button class="p-2 text-gray-400 min-h-12 min-w-12 flex items-center justify-center">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </button>
+                </div>
             </div>
+            <!-- TASK-02: 进度条 -->
+            <div class="absolute bottom-0 left-0 h-[2px] bg-sherry-500 transition-all duration-500 ease-out shadow-[0_1px_4px_rgba(212,84,48,0.3)]" :style="`width: ${readingProgress}%`" style="z-index: 10;"></div>
         </header>
-        <div class="flex-1 overflow-y-auto px-4 py-6 space-y-6 bg-[#FAF9F6] no-scrollbar">
-            <div class="bg-white/60 rounded-2xl p-4 shadow-sm border border-gray-100/50">
-                <p class="text-gray-700 leading-relaxed text-base word-break-all">
-                    星元2077年，最后一朵玫瑰在空间站的无土培养槽中枯萎。
-                    你望着窗外深邃的星空，耳边传来了AI管家那冰冷却温柔的提示音...
-                </p>
-            </div>
-            <div class="flex items-start gap-3 max-w-[90%] honor-flex-fix">
-                <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 shadow-sm honor-avatar-fix">
-                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200" class="w-full h-full object-cover">
-                </div>
-                <div class="flex flex-col gap-1">
-                    <span class="text-[10px] text-gray-400 font-black ml-1">诺亚 (AI)</span>
-                    <div class="bg-white text-gray-700 px-4 py-3 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm text-sm leading-relaxed word-break-all">
-                        指挥官，氧气储量仅剩15%。我们需要在三小时内找到补给。
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-row-reverse items-start gap-3 max-w-[90%] ml-auto honor-flex-fix">
-                <div class="flex flex-col items-end gap-1">
-                    <div class="bg-gradient-to-br from-sherry-500 to-sherry-600 text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-md text-sm leading-relaxed word-break-all">
-                        启动紧急协议。把多余的电力调拨给生命维持系统。
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white border-t border-gray-100 safe-pb">
-            <div class="px-4 py-3 flex items-center justify-between honor-flex-fix border-b border-gray-50">
-                <div class="flex items-center gap-3">
-                    <div class="relative w-10 h-10 flex-shrink-0">
-                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200" class="w-full h-full object-cover rounded-xl border-2 border-white shadow-md">
-                        <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-                    </div>
-                    <div>
-                        <h3 class="font-black text-sm text-gray-900 leading-tight">诺亚</h3>
-                        <div class="flex items-center gap-1 mt-0.5">
-                            <i data-lucide="heart" class="w-3 h-3 text-sherry-500 fill-current"></i>
-                            <span class="text-[10px] text-sherry-500 font-black">Lv.3 亲密无间</span>
+        <!-- 聊天区域 -->
+        <div id="chat-container" class="flex-1 overflow-y-auto px-4 py-6 space-y-6 no-scrollbar bg-[#FAF9F6] scroll-smooth">
+            <template x-for="(msg, index) in messages" :key="msg.id">
+                <div class="space-y-4">
+                    <!-- 旁白/剧情卡片 -->
+                    <template x-if="msg.type === 'story'">
+                        <div :class="msg.isTitle ? 'text-center py-8' : 'bg-white/60 rounded-2xl p-4 shadow-sm border border-gray-100/50'">
+                            <template x-if="msg.isTitle">
+                                <h2 class="text-xl font-black text-gray-900 tracking-wider" x-text="msg.text"></h2>
+                            </template>
+                            <template x-if="!msg.isTitle">
+                                <div class="space-y-3">
+                                    <template x-for="part in msg.parts" :key="part.text">
+                                        <div>
+                                            <template x-if="part.type === 'narration' || part.type === 'text'">
+                                                <p class="text-gray-700 leading-relaxed text-base word-break-all" x-text="part.text"></p>
+                                            </template>
+                                            <template x-if="part.type === 'dialogue'">
+                                                <div :class="part.speaker === '我' ? 'flex flex-row-reverse items-start gap-3 max-w-[90%] ml-auto honor-flex-fix my-4' : 'flex items-start gap-3 max-w-[90%] honor-flex-fix my-4'">
+                                                    <template x-if="part.speaker !== '我'">
+                                                        <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 shadow-sm honor-avatar-fix bg-gray-200">
+                                                            <img :src="getCharacterAvatar(part.speaker)" 
+                                                                 :class="getCharacterClass(part.speaker)"
+                                                                 class="w-full h-full object-cover discovery-transition">
+                                                        </div>
+                                                    </template>
+                                                    <div :class="part.speaker === '我' ? 'flex flex-col items-end gap-1' : 'flex flex-col gap-1'">
+                                                        <template x-if="part.speaker !== '我'">
+                                                            <span class="text-[10px] text-gray-400 font-black ml-1" x-text="getCharacterName(part.speaker)"></span>
+                                                        </template>
+                                                        <div :class="part.speaker === '我' ? 'bg-gradient-to-br from-sherry-500 to-sherry-600 text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-md text-sm leading-relaxed word-break-all' : 'bg-white text-gray-700 px-4 py-3 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm text-sm leading-relaxed word-break-all'" x-text="part.text"></div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- 剧情继续按钮 (独立于标题/正文判断，只要是最后一条消息就显示) // TASK-03 -->
+                            <template x-if="msg.id === messages.filter(m => m.type === 'story').pop()?.id && currentChoices.length === 0 && !showChapterEndCard">
+                                <div class="flex justify-center pt-4">
+                                    <button @click="loadNextParagraph()" 
+                                            :disabled="isTyping"
+                                            class="bg-sherry-500 text-white px-6 py-2 rounded-full text-xs font-bold shadow-lg shadow-sherry-500/30 transition-all active:scale-95"
+                                            :class="{ 
+                                                'animate-pulse': currentChoices.length === 0 && !isTyping,
+                                                'opacity-50 cursor-not-allowed': isTyping
+                                            }">
+                                        继续剧情 <i data-lucide="chevron-down" class="inline w-3 h-3 ml-1"></i>
+                                    </button>
+                                </div>
+                            </template>
                         </div>
+                    </template>
+
+                    <!-- 对话气泡 -->
+                    <template x-if="msg.type === 'dialogue'">
+                        <div :class="msg.characterId === 'protagonist' ? 'flex flex-row-reverse items-start gap-3 max-w-[90%] ml-auto honor-flex-fix' : 'flex items-start gap-3 max-w-[90%] honor-flex-fix'">
+                            <template x-if="msg.characterId !== 'protagonist'">
+                                <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 shadow-sm honor-avatar-fix bg-gray-200">
+                                    <img :src="getCharacterAvatar(msg.characterId)" class="w-full h-full object-cover">
+                                </div>
+                            </template>
+                            <div :class="msg.characterId === 'protagonist' ? 'flex flex-col items-end gap-1' : 'flex flex-col gap-1'">
+                                <template x-if="msg.characterId !== 'protagonist'">
+                                    <span class="text-[10px] text-gray-400 font-black ml-1" x-text="getCharacterName(msg.characterId)"></span>
+                                </template>
+                                <div :class="msg.characterId === 'protagonist' ? 'bg-gradient-to-br from-sherry-500 to-sherry-600 text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-md text-sm leading-relaxed word-break-all' : 'bg-white text-gray-700 px-4 py-3 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm text-sm leading-relaxed word-break-all'" x-text="msg.text"></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- 章节结束引导 // TASK-04 -->
+            <template x-if="showChapterEndCard && !isTyping">
+                <div class="py-12 flex flex-col items-center gap-6 animate-fade-in w-full px-4">
+                    <div class="flex items-center gap-4 w-full">
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">End of Chapter</span>
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                    </div>
+                    
+                    <div class="w-full bg-white rounded-[32px] p-8 border-2 border-sherry-50 shadow-xl shadow-sherry-900/5 flex flex-col items-center text-center gap-6 relative overflow-hidden">
+                        <!-- 背景装饰 -->
+                        <div class="absolute -top-12 -right-12 w-32 h-32 bg-sherry-50 rounded-full blur-3xl opacity-60"></div>
+                        <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-sherry-100 rounded-full blur-3xl opacity-40"></div>
+                        
+                        <div class="w-20 h-20 bg-gradient-to-br from-sherry-400 to-sherry-600 rounded-3xl flex items-center justify-center shadow-lg rotate-3">
+                            <i data-lucide="party-popper" class="w-10 h-10 text-white -rotate-3"></i>
+                        </div>
+                        
+                        <div class="relative z-10">
+                            <h4 class="text-xl font-black text-gray-900 mb-2" x-text="currentChapterIndex < currentNovel.chapters.length - 1 ? '恭喜读完本章！' : '🎉 恭喜读完本全篇！'"></h4>
+                            <p class="text-sm text-gray-500 font-medium" x-text="currentChapterIndex < currentNovel.chapters.length - 1 ? '命运的齿轮已再次转动，接下来的故事将更加精彩...' : '你已经见证了星空下的爱与奇迹。这朵永恒的玫瑰，也将永远留在你的心中。'"></p>
+                        </div>
+                        
+                        <button @click="currentChapterIndex < currentNovel.chapters.length - 1 ? loadNextChapter() : view = 'home'" 
+                                class="w-full bg-sherry-500 text-white py-4 rounded-2xl font-black text-base shadow-lg shadow-sherry-500/30 hover:bg-sherry-600 active:scale-95 transition-all flex items-center justify-center gap-3 group">
+                            <span x-text="currentChapterIndex < currentNovel.chapters.length - 1 ? '开启下一章' : '完结撒花，返回首页'"></span>
+                            <i :data-lucide="currentChapterIndex < currentNovel.chapters.length - 1 ? 'sparkles' : 'home'" class="w-5 h-5 transition-transform group-hover:scale-125"></i>
+                        </button>
                     </div>
                 </div>
-                <button class="flex items-center gap-1.5 px-4 py-2 bg-gray-100 rounded-full text-[10px] font-black text-gray-500 min-h-10">
-                    <i data-lucide="wand2" class="w-3 h-3"></i> 开始创作
-                </button>
+            </template>
+
+            <!-- 正在输入提示 -->
+            <div x-show="isTyping" class="flex items-center gap-2 text-gray-400 text-[10px] font-bold animate-pulse ml-4 pb-8">
+                <span class="w-1 h-1 bg-gray-300 rounded-full animate-bounce"></span>
+                <span class="w-1 h-1 bg-gray-300 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                <span class="w-1 h-1 bg-gray-300 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                <span x-text="getCharacterName(activeCharacterId) + ' 正在思考...'"></span>
             </div>
-            <div class="px-4 py-3 flex items-center gap-3">
-                <button class="p-2.5 text-gray-400 bg-gray-50 rounded-2xl min-h-12 min-w-12 flex items-center justify-center">
-                    <i data-lucide="mic" class="w-6 h-6"></i>
-                </button>
-                <div class="flex-1 bg-gray-100 rounded-2xl px-4 py-2.5 flex items-center">
-                    <input type="text" placeholder="输入你想说的话..." class="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 h-8">
+
+            <!-- TASK-01: 决策选项 UI 按钮组 -->
+            <div x-show="currentChoices.length > 0" class="mt-6 p-4 rounded-3xl bg-white border-2 border-sherry-50 shadow-sm animate-fade-in">
+                <div class="flex items-center justify-between px-2 mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-1.5 h-4 bg-sherry-500 rounded-full animate-pulse"></div>
+                        <span class="text-[11px] font-black text-gray-500 uppercase tracking-widest">命运分歧点</span>
+                    </div>
+                    <span class="text-[9px] text-sherry-400 font-bold">请做出你的抉择</span>
                 </div>
-                <button class="p-3.5 bg-sherry-500 text-white rounded-2xl shadow-lg shadow-sherry-200 min-h-12 min-w-12 flex items-center justify-center">
-                    <i data-lucide="send" class="w-5 h-5"></i>
-                </button>
+                <div class="flex flex-col gap-3">
+                    <template x-for="choice in currentChoices" :key="choice.id">
+                        <button @click="handleChoice(choice)" 
+                                :disabled="isTyping"
+                                :class="isTyping ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
+                                class="group relative w-full bg-white border border-gray-100 hover:border-sherry-500 p-4 rounded-2xl flex items-center justify-between transition-all active:scale-95 hover:scale-[1.01] shadow-sm hover:shadow-md choice-pulse overflow-hidden">
+                            <span class="text-sm font-bold text-gray-800 group-hover:text-sherry-600 transition-colors relative z-10" x-text="choice.text"></span>
+                            <div class="w-8 h-8 rounded-full bg-sherry-50 flex items-center justify-center group-hover:bg-sherry-500 transition-colors relative z-10">
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-sherry-500 group-hover:text-white"></i>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-sherry-50/0 to-sherry-50/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none"></div>
+                        </button>
+                    </template>
+                </div>
             </div>
         </div>
+
+        <div class="bg-white border-t border-gray-100 safe-pb relative flex-shrink-0">
+             <!-- 角色切换选择器 -->
+             <div x-show="showCharacterSelector" x-cloak @click.away="showCharacterSelector = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-10" x-transition:enter-end="opacity-100 translate-y-0" class="absolute bottom-full left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 p-4 shadow-2xl z-50 rounded-t-3xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="text-sm font-black text-gray-900">切换对话角色</h4>
+                    <button @click="showCharacterSelector = false" class="text-gray-400"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                    <template x-for="char in currentNovel.characters" :key="char.id">
+                        <button @click="switchCharacter(char.id)" :class="activeCharacterId === char.id ? 'ring-2 ring-sherry-500 bg-sherry-50' : 'bg-gray-50'" class="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-2xl transition-all min-w-[80px] relative">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden border-2 border-white shadow-sm relative">
+                                <img :src="getCharacterAvatar(char.id)" 
+                                     :class="getCharacterClass(char.id)"
+                                     class="w-full h-full object-cover discovery-transition">
+                                <template x-if="!char.isDiscovered">
+                                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                        <i data-lucide="lock" class="w-3 h-3 text-white"></i>
+                                    </div>
+                                </template>
+                            </div>
+                            <span class="text-[10px] font-bold text-gray-700" x-text="getCharacterName(char.id)"></span>
+                        </button>
+                    </template>
+                </div>
+             </div>
+
+             <!-- 亲密度提升提示 -->
+             <div x-show="showIntimacyChange" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="absolute -top-16 left-4 right-4 bg-white/90 backdrop-blur-md rounded-2xl p-3 shadow-xl border border-sherry-100 flex items-center gap-3 z-50">
+                 <div class="w-10 h-10 bg-sherry-50 rounded-full flex items-center justify-center">
+                     <i data-lucide="heart" class="w-6 h-6 text-sherry-500 fill-current animate-pulse"></i>
+                 </div>
+                 <div class="flex-1">
+                     <p class="text-xs font-black text-gray-900" x-text="showIntimacyChange?.characterName + ' 对你的好感度提升了！'"></p>
+                     <p class="text-[10px] text-sherry-500 font-bold" x-text="'当前等级: ' + showIntimacyChange?.newStatus"></p>
+                 </div>
+             </div>
+ 
+             <!-- 人物关系看板 -->
+             <div class="px-4 py-3 flex items-center justify-between honor-flex-fix border-b border-gray-50 bg-gray-50/50">
+                 <div class="flex items-center gap-3 cursor-pointer group" @click="showCharacterSelector = !showCharacterSelector">
+                     <div class="relative w-10 h-10 flex-shrink-0">
+                         <img :src="getCharacterAvatar(activeCharacterId)" class="w-full h-full object-cover rounded-xl border-2 border-white shadow-md transition-transform group-hover:scale-105">
+                         <div x-show="activeCharacter?.isDiscovered" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                     </div>
+                     <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-black text-sm text-gray-900 leading-tight" x-text="getCharacterName(activeCharacterId)"></h3>
+                            <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400 transition-transform" :class="showCharacterSelector ? 'rotate-180' : ''"></i>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden min-w-[60px] shadow-inner">
+                                <div class="h-full bg-gradient-to-r from-sherry-400 to-sherry-600 rounded-full transition-all duration-1000" :style="`width: ${activeCharacter?.isDiscovered ? '35%' : '0%'}`"></div>
+                            </div>
+                            <span class="text-[9px] text-sherry-600 font-black whitespace-nowrap uppercase tracking-tighter" x-text="activeCharacter?.isDiscovered ? activeCharacter.intimacy.currentStatus : '神秘状态'"></span>
+                        </div>
+                     </div>
+                 </div>
+                 <div class="flex gap-2">
+                    <button @click="isAuthorMode = !isAuthorMode" :class="isAuthorMode ? 'bg-sherry-500 text-white shadow-sherry-200' : 'bg-white text-gray-500 border border-gray-100'" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black transition-all shadow-sm active:scale-95">
+                        <i data-lucide="wand-2" class="w-3 h-3"></i> 创作模式
+                    </button>
+                 </div>
+             </div>
+
+             <div class="px-4 py-3 flex items-center gap-3">
+                 <button class="p-2.5 text-gray-400 bg-gray-50 rounded-2xl min-h-12 min-w-12 flex items-center justify-center">
+                     <i data-lucide="mic" class="w-6 h-6"></i>
+                 </button>
+                 <div class="flex-1 bg-gray-100 rounded-2xl px-4 py-2.5 flex items-center relative">
+                     <template x-if="inputValue.startsWith('@')">
+                        <div class="absolute bottom-full left-0 bg-white border border-gray-100 rounded-xl p-2 shadow-xl mb-2 flex flex-col gap-1 min-w-[120px]">
+                            <template x-for="char in currentNovel.characters" :key="char.id">
+                                <button @click="switchCharacter(char.id); inputValue = ''" class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg text-left">
+                                    <img :src="char.avatar" class="w-6 h-6 rounded-full object-cover">
+                                    <span class="text-xs font-bold text-gray-700" x-text="char.name"></span>
+                                </button>
+                            </template>
+                        </div>
+                     </template>
+                     <input type="text" x-model="inputValue" @keyup.enter="handleSend(inputValue); inputValue = ''" :placeholder="isAuthorMode ? '以创作者身份引导剧情...' : '输入你想说的话...'" class="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 h-8">
+                 </div>
+                 <button @click="handleSend(inputValue); inputValue = ''" 
+                         :disabled="isTyping || !inputValue.trim()"
+                         :class="(isTyping || !inputValue.trim()) ? 'opacity-50 cursor-not-allowed' : ''"
+                         class="p-3.5 bg-sherry-500 text-white rounded-2xl shadow-lg shadow-sherry-200 min-h-12 min-w-12 flex items-center justify-center">
+                     <i data-lucide="send" class="w-5 h-5"></i>
+                 </button>
+             </div>
+         </div>
     </div>
     <div x-show="showDirectory" x-cloak class="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4" x-transition>
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showDirectory = false"></div>
@@ -191,14 +921,14 @@
                 </button>
             </div>
             <div class="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar">
-                <template x-for="i in [1,2,3,4,5]" :key="i">
+                <template x-for="(chapter, index) in currentNovel?.chapters" :key="chapter.id">
                     <button class="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all text-left min-h-16">
                         <div class="flex items-center gap-3">
-                            <span class="text-xs font-black text-gray-300 w-6" x-text="'0'+i"></span>
-                            <span class="text-sm font-bold text-gray-700" x-text="'第'+i+'章：未知的信号'"></span>
+                            <span class="text-xs font-black text-gray-300 w-6" x-text="'0' + (index + 1)"></span>
+                            <span class="text-sm font-bold text-gray-700" x-text="chapter.title"></span>
                         </div>
-                        <i data-lucide="lock" class="w-4 h-4 text-gray-300" x-show="i > 1"></i>
-                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500" x-show="i === 1"></i>
+                        <i data-lucide="lock" class="w-4 h-4 text-gray-300" x-show="index > 0"></i>
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500" x-show="index === 0"></i>
                     </button>
                 </template>
             </div>

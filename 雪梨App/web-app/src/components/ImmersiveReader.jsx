@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Settings, Share2, Sparkles, Send, BookOpen, X, Heart, Quote, CheckCircle, Gift, ChevronRight, Wand2, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { NOVELS } from '../novels/index';
-
-const BASE_URL = import.meta.env.BASE_URL || '/';
 
 export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
   const [story, setStory] = useState(null);
@@ -22,6 +19,9 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
   const [activeCharacter, setActiveCharacter] = useState(null);
   const [characterIntimacy, setCharacterIntimacy] = useState({});
   const [showIntimacyChange, setShowIntimacyChange] = useState(null);
+  const [currentParagraphs, setCurrentParagraphs] = useState([]);
+  const [showChapterComplete, setShowChapterComplete] = useState(false);
+  const [userChoices, setUserChoices] = useState([]);
   const messagesEndRef = useRef(null);
 
   const validateStoryAvatars = (storyData) => {
@@ -94,12 +94,7 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
 
   const loadStory = async () => {
     try {
-      const novel = NOVELS.find(n => n.id === storyId);
-      if (!novel) {
-        throw new Error(`Novel with id ${storyId} not found`);
-      }
-      
-      const response = await fetch(`${BASE_URL}novels/${novel.file}`);
+      const response = await fetch(`http://localhost:3001/api/novels/${storyId}`);
       if (!response.ok) {
         throw new Error(`Failed to load story: ${response.statusText}`);
       }

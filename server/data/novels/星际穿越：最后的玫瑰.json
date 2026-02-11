@@ -1,0 +1,263 @@
+{
+  "id": 1,
+  "title": "星际穿越：最后的玫瑰",
+  "author": "银河漫游者",
+  "cover": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop",
+  "description": "在数亿光年外的废弃星球，一位植物学家发现了一朵在真空绽放的玫瑰，而它的守护者竟然是...",
+  "tags": ["科幻", "浪漫", "冒险"],
+  "characters": [
+    {
+      "id": "c1",
+      "name": "守护者",
+      "isDiscovered": false,
+      "role": "AI守护者",
+      "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=guardian&backgroundColor=1a1a2e",
+      "persona": "冷漠、理智、高科技AI实体，但内心深处保留着前主人的情感记忆。",
+      "intimacy": {
+        "currentStatus": "陌生人",
+        "upgradePath": [
+          { "status": "陌生人", "description": "初次相遇，充满戒备" },
+          { "status": "谨慎观察", "description": "开始对你产生好奇", "condition": { "type": "choice", "id": "c1_p9_1" } },
+          { "status": "初步信任", "description": "愿意分享一些信息", "condition": { "type": "interaction_count", "value": 3 } },
+          { "status": "情感共鸣", "description": "开始回忆起前主人的情感", "condition": { "type": "choice", "id": "c2_p2_6_2" } },
+          { "status": "深度羁绊", "description": "将你视为值得信任的伙伴", "condition": { "type": "choice", "id": "c3_p3_4_2" } }
+        ]
+      }
+    },
+    {
+      "id": "system",
+      "role": "AI系统",
+      "name": "系统",
+      "isDiscovered": true,
+      "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=system&backgroundColor=16213e",
+      "persona": "高科技AI system，负责监控和警告。",
+      "intimacy": {
+        "currentStatus": "已激活",
+        "upgradePath": [
+          { "status": "未激活", "description": "系统处于休眠状态" },
+          { "status": "已激活", "description": "系统开始响应你的指令", "condition": { "type": "choice", "id": "c2_p2_6_1" } },
+          { "status": "完全同步", "description": "系统与你的思维完全同步", "condition": { "type": "interaction_count", "value": 8 } }
+        ]
+      }
+    },
+    {
+      "id": "c2",
+      "name": "艾莉亚",
+      "isDiscovered": false,
+      "role": "玫瑰创造者",
+      "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=aria&gender=female&hairColor=ff6b9d&skinColor=f2d3b1",
+      "persona": "温柔、智慧、充满爱心，是玫瑰的创造者。",
+      "intimacy": {
+        "currentStatus": "神秘影像",
+        "upgradePath": [
+          { "status": "神秘影像", "description": "神秘的玫瑰创造者" },
+          { "status": "友好交流", "description": "愿意与你分享玫瑰的秘密", "condition": { "type": "event", "id": "discovery_c2" } },
+          { "status": "信任伙伴", "description": "相信你能帮助保护玫瑰", "condition": { "type": "choice", "id": "c3_p3_4_2" } }
+        ]
+      }
+    }
+  ],
+  "chapters": [
+    {
+      "id": 1,
+      "title": "第一章：真空中的奇迹",
+      "initialMessage": "人类，离开这里。这朵玫瑰不属于你们的世界。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [{ "type": "narration", "text": "飞船的引擎轰鸣声逐渐平息，我降落在这个名为 'Proxima-B' 的荒凉星球上。" }]
+        },
+        {
+          "id": "p2",
+          "parts": [{ "type": "narration", "text": "这里的重力只有地球的0.8倍，每走一步都像是在月球漫步。我的扫描仪不断发出 '滴滴' 的警报声，显示周围的辐射值正在急剧上升。" }]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "见鬼，这种鬼地方怎么可能有生命反应？" },
+            { "type": "narration", "text": "我嘟囔着，调整了一下氧气面罩。" }
+          ]
+        },
+        {
+          "id": "p4",
+          "parts": [{ "type": "narration", "text": "突然，在一片灰色的陨石坑中央，一抹刺眼的红色闯入了我的视野。" }]
+        },
+        {
+          "id": "p5",
+          "parts": [{ "type": "narration", "text": "那是一朵玫瑰。" }]
+        },
+        {
+          "id": "p6",
+          "parts": [{ "type": "narration", "text": "它静静地悬浮在半空中，被一个微弱的淡蓝色力场包裹着。" }]
+        },
+        {
+          "id": "p7",
+          "parts": [{ "type": "narration", "text": "我屏住呼吸，慢慢靠近。就在我的指尖即将触碰到力场边缘时，一个冰冷的机械音在我脑海中直接响起。" }]
+        },
+        {
+          "id": "p8",
+          "parts": [{ "type": "dialogue", "speaker": "系统", "text": "警告。检测到未经授权的碳基生物接触。" }]
+        },
+        {
+          "id": "p9",
+          "parts": [{ "type": "narration", "text": "一个修长的身影在玫瑰旁缓缓显现。他有着人类的外形，但皮肤呈现出金属般的冷冽光泽。" }],
+          "choices": [
+            { "id": "c1_p9_1", "text": "询问玫瑰的来历", "nextParagraphs": ["p10", "p11"] },
+            { "id": "c1_p9_2", "text": "表达自己的无害", "nextParagraphs": ["p13"] }
+          ]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p10",
+          "parts": [{ "type": "dialogue", "speaker": "我", "text": "这朵玫瑰...它是怎么在真空中存活的？" }]
+        },
+        {
+          "id": "p11",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "它是艾莉亚留下的最后一件作品。它不需要氧气，它吸食的是星光。" },
+            { "type": "narration", "text": "守护者的语气中带着一丝不易察觉的自豪。" }
+          ]
+        },
+        {
+          "id": "p13",
+          "parts": [
+            { "type": "dialogue", "speaker": "我", "text": "别紧张，我只是一名植物学家。我被这朵花的生命信号吸引而来。" },
+            { "type": "dialogue", "speaker": "守护者", "text": "植物学家？在废墟中寻找生命的人吗...倒是罕见。" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "第二章：掠夺者的阴影",
+      "paragraphs": [
+        {
+          "id": "p2-1",
+          "parts": [{ "type": "narration", "text": "天空被巨大的阴影笼罩，掠夺者的战舰如同一头钢铁巨兽，缓缓降临。" }]
+        },
+        {
+          "id": "p2-2",
+          "parts": [{ "type": "narration", "text": "强烈的电磁脉冲扫过地表，守护者的身体微微颤抖，双眼的蓝光变得不稳定起来。" }]
+        },
+        {
+          "id": "p2-3",
+          "parts": [{ "type": "dialogue", "speaker": "守护者", "text": "他们终究还是找到了这里...比我预想的要快。" }]
+        },
+        {
+          "id": "p2-4",
+          "parts": [{ "type": "narration", "text": "战舰底部的舱门缓缓打开，无数细小的无人机像蜂群一样涌出。" }]
+        },
+        {
+          "id": "p2-5",
+          "parts": [{ "type": "dialogue", "speaker": "我", "text": "我们得做点什么！那朵玫瑰挡不住这种火力的！" }]
+        },
+        {
+          "id": "p2-6",
+          "parts": [{ "type": "narration", "text": "守护者转过身，深邃的目光凝视着我，仿佛在做一个艰难的决定。" }],
+          "choices": [
+            { "id": "c2_p2_6_1", "text": "激活系统防御协议", "nextParagraphs": ["p2-7"] },
+            { "id": "c2_p2_6_2", "text": "用身体护住玫瑰", "nextParagraphs": ["p2-8"] }
+          ]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p2-7",
+          "parts": [
+            { "type": "dialogue", "speaker": "系统", "text": "防御协议已激活。正在同步神经连接..." },
+            { "type": "narration", "text": "随着系统的指令，周围的力场瞬间加强，泛起耀眼的紫光。无人机的激光击中力场，只激起了一阵涟漪。" }
+          ]
+        },
+        {
+          "id": "p2-8",
+          "parts": [
+            { "type": "narration", "text": "我不顾一切地扑向玫瑰。灼热的激光擦过我的防护服，我感到一阵剧痛，但我紧紧抱住了那个淡蓝色的力场球。" },
+            { "type": "dialogue", "speaker": "守护者", "text": "林晓！你疯了吗？你只是个脆弱的碳基生物！" },
+            { "type": "narration", "text": "守护者的声音第一次出现了明显的波动——那是名为担心的情感。" }
+          ]
+        },
+        {
+          "id": "p2-9",
+          "parts": [
+            { "type": "narration", "text": "危急时刻，一个全息投影突然从玫瑰的花蕊中弹出。一个温柔的女性身影出现在我们面前。" },
+            { "type": "dialogue", "speaker": "艾莉亚", "text": "我的孩子们，不要争吵。爱才是最强大的护盾。" },
+            { "type": "narration", "text": "守护者愣住了，他颤抖着伸出手，想要触碰那个虚幻的身影。" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p2-6",
+          "condition": "user_interacted",
+          "targetParagraph": "p2-9"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "第三章：永恒的绽放",
+      "paragraphs": [
+        {
+          "id": "p3-1",
+          "parts": [
+            { "type": "narration", "text": "艾莉亚的影像虽然微弱，但她散发出的能量波动让那些无人机纷纷坠落，掠夺者的战舰也因为系统过载而不得不撤退。" }
+          ]
+        },
+        {
+          "id": "p3-2",
+          "parts": [
+            { "type": "narration", "text": "尘埃落定。守护者静静地站在我身边，那朵玫瑰在他掌心散发出前所未有的光芒。" }
+          ]
+        },
+        {
+          "id": "p3-3",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "林晓，我的能量核心受损严重。我无法再继续留在这里守护她了。" }
+          ]
+        },
+        {
+          "id": "p3-4",
+          "parts": [
+            { "type": "narration", "text": "他看着我，眼中的数据流平缓而深邃。" }
+          ],
+          "choices": [
+            { "id": "c3_p3_4_1", "text": "带走玫瑰，回地球研究", "nextParagraphs": ["p3-5"] },
+            { "id": "c3_p3_4_2", "text": "留下来，接替他的职责", "nextParagraphs": ["p3-6"] }
+          ]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "p3-5",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "去吧。也许在你们的世界，她能绽放出不一样的光彩。但我希望你永远记住，她不仅仅是一株植物。" },
+            { "type": "narration", "text": "我小心翼翼地捧起玫瑰。当我踏上飞船时，回头看见守护者的身体正逐渐化为点点星光，消散在虚空之中。" }
+          ]
+        },
+        {
+          "id": "p3-6",
+          "parts": [
+            { "type": "dialogue", "speaker": "守护者", "text": "你确定吗？这可能意味着你将永远孤独地留在这片星海中。" },
+            { "type": "dialogue", "speaker": "我", "text": "在这朵玫瑰面前，孤独并不存在。我会守护她，直到宇宙的尽头。" },
+            { "type": "narration", "text": "守护者露出了他三千年来第一个微笑。他将掌心的蓝色光晕缓缓注入我的眉心。那一刻，我感觉自己与整片星空融为了一体。" }
+          ]
+        },
+        {
+          "id": "p3-final",
+          "parts": [
+            { "type": "narration", "text": "无论选择如何，那朵来自真空的红色玫瑰，依然在星光下静静绽放，见证着爱与守护的奇迹。" },
+            { "type": "narration", "text": "（全剧终）" }
+          ]
+        }
+      ],
+      "dialogueTriggers": [
+        {
+          "paragraphId": "p3-4",
+          "condition": "user_interacted",
+          "targetParagraph": "p3-final"
+        }
+      ]
+    }
+  ]
+}

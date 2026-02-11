@@ -1,15 +1,29 @@
 import { useState, useEffect } from 'react';
 import Home from './components/Home';
 import ImmersiveReader from './components/ImmersiveReader';
-import { NOVELS } from './novels/index';
 import { Home as HomeIcon, Book, User, Smartphone, Monitor } from 'lucide-react';
 
 function App() {
   const [view, setView] = useState('home');
   const [selectedStoryId, setSelectedStoryId] = useState(null);
+  const [novels, setNovels] = useState([]);
   const [isMobileMode, setIsMobileMode] = useState(true);
   const [isRealMobile, setIsRealMobile] = useState(false);
   const [isHonorSim, setIsHonorSim] = useState(false);
+
+  useEffect(() => {
+    const fetchNovels = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/novels');
+        if (!response.ok) throw new Error('Failed to fetch novels');
+        const data = await response.json();
+        setNovels(data);
+      } catch (error) {
+        console.error('Error fetching novels:', error);
+      }
+    };
+    fetchNovels();
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -100,7 +114,7 @@ function App() {
         {view === 'home' && (
           <div className="flex flex-col h-full overflow-hidden honor-flex-fix" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <div className="flex-1 overflow-y-auto no-scrollbar pb-16">
-              <Home novels={NOVELS} onSelectStory={handleSelectStory} isMobileMode={isMobileMode || isRealMobile} />
+              <Home novels={novels} onSelectStory={handleSelectStory} isMobileMode={isMobileMode || isRealMobile} />
             </div>
             
             <div className="h-16 bg-white border-t border-gray-100 flex flex-row justify-around items-center fixed bottom-0 left-0 right-0 w-full z-[100] safe-pb honor-flex-fix" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', position: isRealMobile ? 'fixed' : 'absolute' }}>
