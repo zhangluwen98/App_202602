@@ -20,7 +20,7 @@ function App() {
 
   return (
     <div className="flex justify-center bg-gray-200 min-h-screen font-sans">
-      <div className="w-full sm:max-w-md bg-white min-h-screen shadow-2xl relative overflow-hidden flex flex-col">
+      <div className="w-full max-w-md bg-white min-h-screen shadow-2xl relative overflow-hidden flex flex-col">
         
         {view === 'home' && (
           <>
