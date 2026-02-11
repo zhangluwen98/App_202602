@@ -451,7 +451,7 @@ export default function ImmersiveReader({ storyId, onBack }) {
   const character = story.characters[0];
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-[#FAF9F6] to-[#F5F3EF] font-sans">
+    <div className="h-full flex flex-col bg-gradient-to-br from-[#FAF9F6] to-[#F5F3EF] font-sans">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 px-2 sm:px-4 py-2 sm:py-3 flex justify-between items-center shadow-sm z-20">
         <div className="flex items-center gap-1.5 sm:gap-3">
