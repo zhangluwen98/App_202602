@@ -60,14 +60,18 @@
         // 静态模式下的文件映射表
         const getStaticPath = (url) => {
             if (!isGitHubPages) return url;
+            
+            // 确保 API_BASE 不会重复拼接仓库名
+            const base = window.location.origin + repoName;
+            
             if (url.includes('/api/novels')) {
                 const idMatch = url.match(/\/api\/novels\/([^\/]+)/);
                 if (idMatch) {
                     // GitHub Pages 路径补全：映射到 server/data/novels/
-                    return `${API_BASE}/server/data/novels/${decodeURIComponent(idMatch[1])}.json`;
+                    return `${base}/server/data/novels/${decodeURIComponent(idMatch[1])}.json`;
                 }
                 // 列表页映射到 server/data/novels_list.json
-                return `${API_BASE}/server/data/novels_list.json`;
+                return `${base}/server/data/novels_list.json`;
             }
             return url;
         };
