@@ -1,0 +1,129 @@
+{
+  "id": "八月下午",
+  "title": "八月下午",
+  "author": "佚名",
+  "cover": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=800&fit=crop",
+  "description": "他收拾行李，她靠在门框。蝉鸣，水珠，拉链，绿萝。一句邀请，两个答案。",
+  "tags": ["短篇", "情感", "离别", "选择"],
+  "characters": [
+    {
+      "id": "c1",
+      "name": "他",
+      "isDiscovered": true,
+      "role": "男主角",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=he",
+      "persona": "沉默、内敛，即将离开",
+      "intimacy": {
+        "currentStatus": "陌生",
+        "upgradePath": [
+          {
+            "status": "熟悉",
+            "description": "他答应了她的吃饭邀请",
+            "condition": {
+              "type": "choice",
+              "id": "ch_p3_2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "c2",
+      "name": "她",
+      "isDiscovered": true,
+      "role": "女主角",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=she",
+      "persona": "温柔、含蓄，试图挽留",
+      "intimacy": {
+        "currentStatus": "陌生",
+        "upgradePath": [
+          {
+            "status": "熟悉",
+            "description": "他答应了她的吃饭邀请",
+            "condition": {
+              "type": "choice",
+              "id": "ch_p3_2"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "chapters": [
+    {
+      "id": 1,
+      "title": "离别",
+      "initialMessage": "她靠在门框上，看着你收拾行李。蝉声聒噪，八月下午。",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "parts": [
+            { "type": "dialogue", "text": "真决定走了？", "speaker": "她" },
+            { "type": "narration", "text": "他停下收拾行李的手，没回头。" },
+            { "type": "dialogue", "text": "嗯。", "speaker": "他" },
+            { "type": "narration", "text": "窗外蝉鸣忽然拔高，像锯子锯进八月下午。她靠在门框上，手里的玻璃杯沁出水珠，一滴，两滴，落在地板。" },
+            { "type": "dialogue", "text": "几点的车？", "speaker": "她" },
+            { "type": "dialogue", "text": "六点十八。", "speaker": "他" },
+            { "type": "dialogue", "text": "那还早。", "speaker": "她" }
+          ]
+        },
+        {
+          "id": "p2",
+          "parts": [
+            { "type": "narration", "text": "他没说话，把几本书塞进箱子，拉链卡在半路，扯了两下没扯动。" },
+            { "type": "narration", "text": "她走过去，弯腰，手指按在拉链齿上。" },
+            { "type": "dialogue", "text": "用点力。", "speaker": "她" },
+            { "type": "narration", "text": "他使劲一拽，拉链合上了。" },
+            { "type": "narration", "text": "她站直，把杯子搁在桌边。" },
+            { "type": "dialogue", "text": "喝口水。", "speaker": "她" },
+            { "type": "narration", "text": "他端起杯子，喝了一口。凉白开，不冰，也不温。" }
+          ]
+        },
+        {
+          "id": "p3",
+          "parts": [
+            { "type": "dialogue", "text": "我妈说，你走之前，来家里吃顿饭。", "speaker": "她" },
+            { "type": "narration", "text": "他看着杯底那道细小的裂纹，很久以前就有了。" }
+          ],
+          "choices": [
+            { "id": "ch_p3_1", "text": "不了。", "nextParagraphs": ["ep1"] },
+            { "id": "ch_p3_2", "text": "好。", "nextParagraphs": ["ep2"] }
+          ]
+        }
+      ],
+      "extendedParagraphs": [
+        {
+          "id": "ep1",
+          "parts": [
+            { "type": "dialogue", "text": "不了。", "speaker": "他" },
+            { "type": "narration", "text": "她没再说话。" },
+            { "type": "narration", "text": "窗外蝉还在叫。他拉上箱子的搭扣，站起来，转过身。" },
+            { "type": "narration", "text": "她靠在门框上，姿势跟刚进门时一模一样。" },
+            { "type": "dialogue", "text": "那我走了。", "speaker": "他" },
+            { "type": "narration", "text": "她点点头。" },
+            { "type": "narration", "text": "他拖着箱子往门口走，经过她身边时，脚步顿了一下。" },
+            { "type": "dialogue", "text": "你那盆绿萝，", "speaker": "他" },
+            { "type": "dialogue", "text": "别浇太多水，根会烂。", "speaker": "他" },
+            { "type": "narration", "text": "她没看他。" },
+            { "type": "dialogue", "text": "知道了。", "speaker": "她" },
+            { "type": "narration", "text": "他走出门。走廊里的声控灯亮了又灭。" },
+            { "type": "narration", "text": "她站在空屋子里，端起桌上那杯他没喝完的水，对着那道裂纹，慢慢喝了一口。" }
+          ]
+        },
+        {
+          "id": "ep2",
+          "parts": [
+            { "type": "dialogue", "text": "好。", "speaker": "他" },
+            { "type": "narration", "text": "她愣了一下，随即嘴角扬起细微的弧度。" },
+            { "type": "dialogue", "text": "真的？", "speaker": "她" },
+            { "type": "dialogue", "text": "嗯，吃了饭再走。", "speaker": "他" },
+            { "type": "narration", "text": "她把杯子放回桌上，声音轻快了些。" },
+            { "type": "dialogue", "text": "那我去准备。", "speaker": "她" },
+            { "type": "narration", "text": "他看着她转身走向厨房，箱子的拉链还开着，他把它拉上，但没有提起来。" },
+            { "type": "narration", "text": "蝉还在叫，但听起来不那么刺耳了。" }
+          ]
+        }
+      ]
+    }
+  ]
+}
