@@ -61,17 +61,15 @@
         const getStaticPath = (url) => {
             if (!isGitHubPages) return url;
             
-            // 确保 base path 正确指向 GitHub Pages 的根目录
-            const base = window.location.origin + repoName;
-            
             if (url.includes('/api/novels')) {
                 const idMatch = url.match(/\/api\/novels\/([^\/]+)/);
                 if (idMatch) {
-                    // GitHub Pages 环境下：映射到 /novels/ 目录
-                    return `${base}/novels/${decodeURIComponent(idMatch[1])}.json`;
+                    // GitHub Pages 环境下：使用相对路径访问 /novels/ 目录
+                    // 假设 mobile_preview.html 在根目录
+                    return `./novels/${decodeURIComponent(idMatch[1])}.json`;
                 }
-                // 列表页映射到 /novels_list.json
-                return `${base}/novels_list.json`;
+                // 列表页映射到同级目录下的 novels_list.json
+                return `./novels_list.json`;
             }
             return url;
         };
