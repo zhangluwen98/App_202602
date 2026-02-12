@@ -61,15 +61,18 @@
         const getStaticPath = (url) => {
             if (!isGitHubPages) return url;
             
+            // 获取当前页面的目录路径 (例如 /App_202602/)，确保在 GitHub Pages 子目录下能正确定位
+            const currentPath = window.location.pathname;
+            const baseDir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+            
             if (url.includes('/api/novels')) {
                 const idMatch = url.match(/\/api\/novels\/([^\/]+)/);
                 if (idMatch) {
-                    // GitHub Pages 环境下：使用相对路径访问 /novels/ 目录
-                    // 假设 mobile_preview.html 在根目录
-                    return `./novels/${decodeURIComponent(idMatch[1])}.json`;
+                    // GitHub Pages 环境下：映射到 /novels/ 目录
+                    return `${baseDir}novels/${decodeURIComponent(idMatch[1])}.json`;
                 }
-                // 列表页映射到同级目录下的 novels_list.json
-                return `./novels_list.json`;
+                // 列表页映射到 novels_list.json
+                return `${baseDir}novels_list.json`;
             }
             return url;
         };
@@ -108,21 +111,48 @@
                 async init() {
                     try {
                         const url = getStaticPath(`${API_BASE}/api/novels`);
+                        console.log('Fetching novels from:', url);
                         const response = await fetch(url);
-                        this.novels = await response.json();
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status} while fetching ${url}`);
+                        }
+                        
+                        const text = await response.text();
+                        try {
+                            this.novels = JSON.parse(text);
+                        } catch (e) {
+                            console.error('JSON Parse Error. Content:', text.substring(0, 100));
+                            throw new Error(`Invalid JSON from ${url}. First 20 chars: ${text.substring(0, 20)}`);
+                        }
+                        
                         lucide.createIcons();
-                        this._injectTestHooks(); // SAFETY-NET
+                        this._injectTestHooks();
                     } catch (e) {
                         console.error('Failed to fetch novels:', e);
-                        if (isGitHubPages) alert('数据加载失败，请检查路径: ' + e.message);
+                        if (isGitHubPages) {
+                            alert('数据加载失败！\nURL: ' + getStaticPath(`${API_BASE}/api/novels`) + '\n错误: ' + e.message);
+                        }
                     }
                 },
                 async openReader(novelId) {
-                    this.clearAllTimers(); // 进入阅读器前先清理
+                    this.clearAllTimers();
                     try {
-                        const url = getStaticPath(`${API_BASE}/api/novels/${novelId}`);
+                        const url = getStaticPath(`${API_BASE}/api/novels/${encodeURIComponent(novelId)}`);
+                        console.log('Loading novel from:', url);
                         const response = await fetch(url);
-                        this.currentNovel = await response.json();
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status} while fetching ${url}`);
+                        }
+
+                        const text = await response.text();
+                        try {
+                            this.currentNovel = JSON.parse(text);
+                        } catch (e) {
+                            throw new Error(`Invalid JSON in novel data from ${url}. First 20 chars: ${text.substring(0, 20)}`);
+                        }
+
                         // 初始化角色发现状态
                         this.currentNovel.characters.forEach(c => {
                             if (c.isDiscovered === undefined) c.isDiscovered = true;
@@ -135,7 +165,8 @@
                             this.scrollToBottom();
                         });
                     } catch (e) {
-                        console.error('Failed to fetch novel detail:', e);
+                        console.error('Failed to load novel:', e);
+                        alert('小说内容加载失败！\nURL: ' + getStaticPath(`${API_BASE}/api/novels/${encodeURIComponent(novelId)}`) + '\n错误: ' + e.message);
                     }
                 },
                 get activeCharacter() {
