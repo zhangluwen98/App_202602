@@ -94,7 +94,8 @@ export default function ImmersiveReader({ storyId, onBack, isMobileMode }) {
 
   const loadStory = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/novels/${storyId}`);
+      const API_BASE = `http://${window.location.hostname}:3001`;
+      const response = await fetch(`${API_BASE}/api/novels/${storyId}`);
       if (!response.ok) {
         throw new Error(`Failed to load story: ${response.statusText}`);
       }

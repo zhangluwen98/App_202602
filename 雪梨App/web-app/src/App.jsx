@@ -14,7 +14,8 @@ function App() {
   useEffect(() => {
     const fetchNovels = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/novels');
+        const API_BASE = `http://${window.location.hostname}:3001`;
+        const response = await fetch(`${API_BASE}/api/novels`);
         if (!response.ok) throw new Error('Failed to fetch novels');
         const data = await response.json();
         setNovels(data);

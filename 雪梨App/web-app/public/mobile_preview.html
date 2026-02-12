@@ -49,6 +49,9 @@
             }
         }
 
+        // 动态获取 API 基础路径，解决移动端预览无法连接 localhost 的问题
+        const API_BASE = `http://${window.location.hostname}:3001`;
+
         document.addEventListener('alpine:init', () => {
             Alpine.data('app', () => ({
                 view: 'home', 
@@ -82,7 +85,7 @@
                 },
                 async init() {
                     try {
-                        const response = await fetch('http://localhost:3001/api/novels');
+                        const response = await fetch(`${API_BASE}/api/novels`);
                         this.novels = await response.json();
                         lucide.createIcons();
                         this._injectTestHooks(); // SAFETY-NET
@@ -93,7 +96,7 @@
                 async openReader(novelId) {
                     this.clearAllTimers(); // 进入阅读器前先清理
                     try {
-                        const response = await fetch(`http://localhost:3001/api/novels/${novelId}`);
+                        const response = await fetch(`${API_BASE}/api/novels/${novelId}`);
                         this.currentNovel = await response.json();
                         // 初始化角色发现状态
                         this.currentNovel.characters.forEach(c => {
