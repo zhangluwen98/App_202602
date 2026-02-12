@@ -50,7 +50,27 @@
         }
 
         // 动态获取 API 基础路径，解决移动端预览无法连接 localhost 的问题
-        const API_BASE = `http://${window.location.hostname}:3001`;
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        const repoName = '/App_202602'; 
+
+        const API_BASE = isGitHubPages 
+            ? `${window.location.origin}${repoName}` 
+            : `http://${window.location.hostname}:3001`;
+
+        // 静态模式下的文件映射表
+        const getStaticPath = (url) => {
+            if (!isGitHubPages) return url;
+            if (url.includes('/api/novels')) {
+                const idMatch = url.match(/\/api\/novels\/([^\/]+)/);
+                if (idMatch) {
+                    // GitHub Pages 路径补全：映射到 server/data/novels/
+                    return `${API_BASE}/server/data/novels/${decodeURIComponent(idMatch[1])}.json`;
+                }
+                // 列表页映射到 server/data/novels_list.json
+                return `${API_BASE}/server/data/novels_list.json`;
+            }
+            return url;
+        };
 
         document.addEventListener('alpine:init', () => {
             Alpine.data('app', () => ({
@@ -85,18 +105,21 @@
                 },
                 async init() {
                     try {
-                        const response = await fetch(`${API_BASE}/api/novels`);
+                        const url = getStaticPath(`${API_BASE}/api/novels`);
+                        const response = await fetch(url);
                         this.novels = await response.json();
                         lucide.createIcons();
                         this._injectTestHooks(); // SAFETY-NET
                     } catch (e) {
                         console.error('Failed to fetch novels:', e);
+                        if (isGitHubPages) alert('数据加载失败，请检查路径: ' + e.message);
                     }
                 },
                 async openReader(novelId) {
                     this.clearAllTimers(); // 进入阅读器前先清理
                     try {
-                        const response = await fetch(`${API_BASE}/api/novels/${novelId}`);
+                        const url = getStaticPath(`${API_BASE}/api/novels/${novelId}`);
+                        const response = await fetch(url);
                         this.currentNovel = await response.json();
                         // 初始化角色发现状态
                         this.currentNovel.characters.forEach(c => {
