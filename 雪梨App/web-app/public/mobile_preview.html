@@ -110,7 +110,8 @@
                 },
                 async init() {
                     try {
-                        const url = getStaticPath(`${API_BASE}/api/novels`);
+                        const baseUrl = getStaticPath(`${API_BASE}/api/novels`);
+                        const url = isGitHubPages ? `${baseUrl}?t=${Date.now()}` : baseUrl;
                         console.log('Fetching novels from:', url);
                         const response = await fetch(url);
                         
@@ -131,14 +132,15 @@
                     } catch (e) {
                         console.error('Failed to fetch novels:', e);
                         if (isGitHubPages) {
-                            alert('数据加载失败！\nURL: ' + getStaticPath(`${API_BASE}/api/novels`) + '\n错误: ' + e.message);
+                            alert('数据加载失败！\n尝试访问: ' + getStaticPath(`${API_BASE}/api/novels`) + '\n错误: ' + e.message + '\n请确认文件已存在于仓库根目录。');
                         }
                     }
                 },
                 async openReader(novelId) {
                     this.clearAllTimers();
                     try {
-                        const url = getStaticPath(`${API_BASE}/api/novels/${encodeURIComponent(novelId)}`);
+                        const baseUrl = getStaticPath(`${API_BASE}/api/novels/${encodeURIComponent(novelId)}`);
+                        const url = isGitHubPages ? `${baseUrl}?t=${Date.now()}` : baseUrl;
                         console.log('Loading novel from:', url);
                         const response = await fetch(url);
                         
